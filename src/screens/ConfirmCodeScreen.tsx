@@ -2,10 +2,9 @@ import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import ConfirmCodeInput from '../inputs/ConfirmCodeInput';
 import { IconButton, Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-// import { updateName };
 import { useState } from 'react';
 
-const GET_PROFILE_INFO_LAMBDA_URL = 'https://73q3mp6nlbnva4xzcjrd4d45h40avlmv.lambda-url.us-east-1.on.aws/';
+const GET_PROFILE_INFO_LAMBDA_URL = ''; // TODO: Create lambda function and update the URL here
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
@@ -17,10 +16,12 @@ const ConfirmCodeScreen = ( {navigation} ) => {
     console.log('Getting user profile info for user: ' + cognitoId)
     try {      
       // await updateUserInfo();
-      // throw 'signing up new user'
+      throw 'signing up new user' // TODO: Get rid of this, just using it for testing
       navigation.navigate('home')
     } catch(error) {
       console.log(error)
+      navigation.navigate('signup-name')
+
     }
 
   }

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
-import ConversationItem from '../random/ConversationItem';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import ConversationItem from '../random/ConversationItem';
 
 
 
