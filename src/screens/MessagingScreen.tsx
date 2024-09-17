@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import ConversationItem from '../random/ConversationItem';
 import { useSelector, useDispatch } from 'react-redux';
-import { addMatch } from '../redux/slices/matchesSlice';
 import { useEffect } from 'react';
-import MatchTileMatchesScreen from '../random/MatchTileMatchesScreen';
 
 
 
@@ -22,21 +20,16 @@ const MessagingScreen = () => {
       <Text
         style={styles.likesText}
       >
-        New Matches
+        Messaging
       </Text>
       
       {
-        messages.length === 0 ? 
+        messages.length !== 0 ? 
           <Text>
             No Messages Yet.
           </Text>
         :
           <>
-            <Text
-              style={styles.likesText}
-            >
-              Messages
-            </Text>
             <ScrollView
               style={styles.conversations}
             >
@@ -81,7 +74,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 })
-export default LeaguesScreen;
+export default MessagingScreen;
 
 
 

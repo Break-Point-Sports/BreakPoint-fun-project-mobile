@@ -1,9 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
-import ConversationItem from '../random/ConversationItem';
 import { useSelector, useDispatch } from 'react-redux';
-import { addMatch } from '../redux/slices/matchesSlice';
 import { useEffect } from 'react';
-import MatchTileMatchesScreen from '../random/MatchTileMatchesScreen';
 
 const GET_USER_TOURNAMENTS_LAMBDA_URL = ''
 
@@ -22,13 +19,13 @@ const LeaguesScreen = () => {
       <Text
         style={styles.likesText}
       >
-        New Matches
+        Your Leagues
       </Text>
       
       {
         tournaments.length === 0 ? 
           <Text>
-            No Matches Yet.
+            No Leagues Yet.
           </Text>
         :
           <View>
