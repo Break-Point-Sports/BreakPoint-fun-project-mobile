@@ -20,7 +20,7 @@ const ConfirmCodeScreen = ( {navigation} ) => {
       navigation.navigate('home')
     } catch(error) {
       console.log(error)
-      navigation.navigate('signup-name')
+      navigation.navigate('signup')
 
     }
 

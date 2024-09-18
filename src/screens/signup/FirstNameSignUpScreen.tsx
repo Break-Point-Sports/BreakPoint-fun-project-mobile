@@ -2,12 +2,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux'
-import { updateName } from '../redux/slices/userSlice';
+import { updateFirstName } from '../../redux/slices/userSlice';
 
-const NameSignUpScreen = () => {
+const FirstNameSignUpScreen = () => {
   const navigation = useNavigation(); 
   const dispatch = useDispatch();
-  const firstName = useSelector(state => state.user.name)
+  const firstName = useSelector(state => state.user.firstName)
 
   return (
     <View
@@ -18,7 +18,7 @@ const NameSignUpScreen = () => {
         iconColor={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-birthday')}
+        onPress={() => navigation.navigate('signup-last-name')}
         disabled={firstName === '' ? true : false}
       />
       <Text
@@ -30,7 +30,7 @@ const NameSignUpScreen = () => {
         mode='outlined'
         style={styles.textInput}
         value={firstName}
-        onChangeText={(text) => dispatch(updateName(text))}
+        onChangeText={(text) => dispatch(updateFirstName(text))}
       />
     </View>
   )
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default NameSignUpScreen;
+export default FirstNameSignUpScreen;
 
 
 

@@ -2,8 +2,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
 import PageNavigatorContainer from './PageNavigatorContainer';
-import NameSignUpScreen from '../screens/NameSignUpScreen';
-import BirthdaySignUpScreen from '../screens/BirthdaySignUpScreen';
+import SignUpNavigator from './SignUpNavigator';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -35,15 +35,8 @@ const RootNavigator = () => (
       }}
     />
     <Stack.Screen 
-      name="signup-name" 
-      component={NameSignUpScreen} 
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen 
-      name='signup-birthday'
-      component={BirthdaySignUpScreen} 
+      name="signup" 
+      component={SignUpNavigator} 
       options={{
         headerShown: false,
       }}

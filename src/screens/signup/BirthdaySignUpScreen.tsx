@@ -2,9 +2,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import { useDispatch, useSelector } from 'react-redux'
-import { updateBirthday } from '../redux/slices/userSlice';
+import { updateBirthday } from '../../redux/slices/userSlice';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const BirthdaySignUpScreen = () => {
@@ -29,7 +29,7 @@ const BirthdaySignUpScreen = () => {
         color={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('wheredoyoulive')}
+        onPress={() => navigation.navigate('signup-gender')}
         disabled={birthday === '' ? true : false}
       />
       <Text
@@ -37,13 +37,12 @@ const BirthdaySignUpScreen = () => {
       >
         What's your birthday?
       </Text>
-      {/* <DateTimePicker
+      <DateTimePicker
         display='spinner'
         value={date}
         mode='date'
         onChange={onChange}
-        style={styles.dateTimePicker}
-      /> */}
+      />
     </View>
   )
 }

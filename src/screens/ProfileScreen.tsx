@@ -60,7 +60,7 @@ const ProfileScreen = ({ navigation }) => {
       <Text
         style={styles.name}
       >
-        {name}, 26
+        {name}
       </Text>
       <Button
         style={styles.missionButton}
