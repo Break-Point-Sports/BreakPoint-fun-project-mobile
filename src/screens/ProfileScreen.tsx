@@ -94,6 +94,12 @@ const ProfileScreen = ({ navigation }) => {
       >
         Contact Us
       </Button>
+      <Button
+        style={styles.contactButton}
+        labelStyle={styles.label}
+      >
+        Community Standards
+      </Button>
       <View
         style={styles.logoutButtonView}
       >
@@ -112,9 +118,6 @@ const ProfileScreen = ({ navigation }) => {
       <SettingsDrawer
         settingsRef={settingsRef}
       />
-      {/* // <ViewProfileDrawer
-      //   viewProfileRef={viewProfileRef}
-      // />  */}
 
     </View>
   );

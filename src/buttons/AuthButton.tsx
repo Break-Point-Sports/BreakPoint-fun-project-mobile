@@ -10,7 +10,7 @@ const AuthButton = ({onPress, buttonActive}) => {
       style={styles.submitButtonActive}
       labelStyle={styles.buttonLabel}
     >
-      Continue
+      Login/Signup
     </Button>
   
       :
@@ -20,7 +20,7 @@ const AuthButton = ({onPress, buttonActive}) => {
       style={styles.submitButtonInactive}
       labelStyle={styles.buttonLabel}
     >
-        Continue
+        Login/Signup
     </Button>
   )
 };
