@@ -1,8 +1,6 @@
 import { StyleSheet, Image, View, TextInput, ActivityIndicator } from 'react-native';
 import AuthButton from '../buttons/AuthButton';
-import { signIn } from 'aws-amplify/auth';
-// import CountryPicker from 'react-native-country-picker-modal';
-// import PhoneInput from 'react-native-phone-input';
+import { signIn, signUp } from 'aws-amplify/auth';
 import PhoneInput, {ICountry} from 'react-native-international-phone-number';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
@@ -26,19 +24,26 @@ const LoginScreen = ({ navigation }) => {
     dispatch(updateCognitoId('123456'));
     dispatch(updatePhoneNumber(phoneNumber));
     try {
-      // user = await auth.signIn(countryCode + phoneNumber.replace(/\s/g, ""), 'password');
-      // console.log(user)
+      // const { nextStep } = await signIn({
+      //   username: countryCode + phoneNumber.replace(/\s/g, ""),
+      //   password: "password",
+      // })
+      console.log('successfully sent login code to: ' + countryCode + phoneNumber)
+
+      // console.log(nextStep);
 
       navigation.navigate(confirmCodeScreenIdentifier)
+
     } catch (error) {
       console.log(error);
+
       try {
         await sendSignUpCode(countryCode, phoneNumber)
-        navigation.navigate(confirmCodeScreenIdentifier)
         console.log('successfully sent sign up code to: ' + countryCode + phoneNumber)
+        navigation.navigate(confirmCodeScreenIdentifier)
+
       } catch (error) {
         console.log(error);
-        navigation.navigate(confirmCodeScreenIdentifier)
       }
     }
     setShowIndicator(false);
@@ -46,15 +51,12 @@ const LoginScreen = ({ navigation }) => {
   
   const sendSignUpCode = async (countryCode, phoneNumber) => {
     console.log(countryCode + phoneNumber)
-    // const cognitoUser = await Auth.signUp({
-    //   username: countryCode + phoneNumber,
-    //   password: 'password',
-    // });
-    // console.log(cognitoUser)
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username: countryCode + phoneNumber.replace(/\s/g, ""),
+        password: "password",
+      });
+    console.log(userId)
   };
-
-
-
 
   function onSelectCountry(country) {
     setCountry(country);

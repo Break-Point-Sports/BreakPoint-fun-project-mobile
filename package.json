@@ -9,13 +9,18 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@aws-amplify/react-native": "^1.1.6",
+    "@aws-sdk/client-sso-oidc": "^3.678.0",
+    "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "aws-amplify": "^6.6.6",
     "expo": "~51.0.28",
     "expo-image": "~1.12.15",
+    "expo-image-picker": "~15.0.7",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-native": "0.74.5",
@@ -24,15 +29,19 @@
     "react-native-raw-bottom-sheet": "^3.0.0",
     "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
-    "react-redux": "^9.1.2",
-    "expo-image-picker": "~15.0.7"
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.2.1",
-    "@aws-amplify/backend-cli": "^1.2.6",
+    "@aws-amplify/backend": "^1.5.0",
+    "@aws-amplify/backend-cli": "^1.2.9",
     "@babel/core": "^7.20.0",
     "@types/react": "^18.3.5",
-    "typescript": "^5.6.2"
+    "aws-cdk": "^2.163.1",
+    "aws-cdk-lib": "^2.163.1",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
   },
   "private": true
 }

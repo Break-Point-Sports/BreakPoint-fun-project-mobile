@@ -14,7 +14,7 @@ const SignUpNavigator = () => (
       gestureEnabled: false
     }}
   >
-    <Stack.Screen 
+    {/* <Stack.Screen 
       name="signup-first-name" 
       component={FirstNameSignUpScreen} 
       options={{
@@ -41,7 +41,7 @@ const SignUpNavigator = () => (
       options={{
         headerShown: false,
       }}
-    />
+    /> */}
     <Stack.Screen 
       name='signup-picture'
       component={AddPictureSignUpScreen} 

@@ -20,7 +20,7 @@ const RootNavigator = () => (
         headerShown: false,
       }}
     /> */}
-    <Stack.Screen 
+    {/* <Stack.Screen 
       name="login" 
       component={LoginScreen} 
       options={{
@@ -33,7 +33,7 @@ const RootNavigator = () => (
       options={{
         headerShown: false,
       }}
-    />
+    /> */}
     <Stack.Screen 
       name="signup" 
       component={SignUpNavigator} 

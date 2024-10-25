@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import pickImage from '../../util/PickImage';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import pickImage from '../../util/PickImage'
 
-const ADD_PHOTO_LAMBDA_URL = "";
-const CREATE_NEW_USER_LAMBDA_URL = ""
+
+const UPDATE_PROFILE_PIC_LAMBDA_URL = "https://27ksr4utemgyckb4nxqb62wkcq0xnsfk.lambda-url.us-east-1.on.aws/";
+const CREATE_NEW_USER_LAMBDA_URL = "https://b54tz6kjxddxjhn6d2aqbfvvfm0tcktv.lambda-url.us-east-1.on.aws/"
 
 const AddPictureSignUpScreen = () => {
   const navigation = useNavigation();
@@ -15,61 +16,65 @@ const AddPictureSignUpScreen = () => {
 
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
-  const name = useSelector(state => state.user.name)
+  const firstName = useSelector(state => state.user.firstName)
+  const lastName = useSelector(state => state.user.lastName)
   const birthday = useSelector(state => state.user.birthday)
-  const whereDoYouLive = useSelector(state => state.user.whereDoYouLive)
   const gender = useSelector(state => state.user.gender)
-
-
-
-  const updateImage = async () => {    
-    try {
-
-      const imageData = await pickImage();
-      const uri = imageData.assets[0].uri;
-      
-      // console.log('Calling Add Photo Lambda with cognitoId: ' + cognitoId)
-
-      // const response = await fetch(ADD_PHOTO_LAMBDA_URL, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     cognitoId: cognitoId,
-      //     filename: photoNumber.toString() + '.jpg'
-      //   }),
-      // });
-      // const lambdaJson = await response.json();
-
-      // const S3Url = lambdaJson.url;
-      // const fields = lambdaJson.fields;
-      // const formData = new FormData();
-
-      // for (var key in fields) {
-      //     formData.append(key, fields[key]);
-      // }
-      // formData.append("file", {uri: uri, type: 'image/jpeg'})
-
-      // console.log("contacting S3")
-      // const response2 = await fetch(S3Url, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data'
-      //   },
-      //   method: 'POST',
-      //   body: formData
-      // });
-
-      setImageURL(uri)
-      console.log("done")
-    } catch (error) {
-      console.log(error);
-    }
-  }
+ 
 
   const onPressArrow = async() => {
     // await createProfile();
     navigation.navigate('home');
+  }
+
+  const pickAndUploadImage = async() => {
+    const pickedImage = await pickImage();
+    const imageAsset = pickedImage.assets[0];
+    const imageURI = imageAsset.uri;
+    const imageBlob = await getBlob(imageURI);
+
+    const S3URL = await callUdateProfilePicLambdaAndGetS3URL();
+    console.log(S3URL);
+
+    try {
+      await callS3PresignedUrlAndUploadImage(S3URL, imageBlob)
+      setImageURL(imageURI);
+    } catch (error) {
+      console.log(error);
+      alert("Castastrophic failure. You will now die.")
+    }
+  }
+
+  const callUdateProfilePicLambdaAndGetS3URL = async() => {
+    const response = await fetch(UPDATE_PROFILE_PIC_LAMBDA_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        cognitoId: cognitoId,
+      }),
+    });
+    const lambdaJson = await response.json();
+    return lambdaJson.url;
+  }
+
+  const getBlob = async (fileUri) => {
+    const resp = await fetch(fileUri);
+    const imageBody = await resp.blob();
+    return imageBody;
+  };
+  
+  const callS3PresignedUrlAndUploadImage = async(S3URL, imageBlob) => {
+    console.log("contacting S3")
+    const response2 = await fetch(S3URL, {
+      headers: {
+        'Content-Type': 'image/jpeg'
+      },
+      method: 'PUT',
+      body: imageBlob
+    });
+    console.log(response2);
   }
 
   // const createProfile = async() => {
@@ -121,7 +126,7 @@ const AddPictureSignUpScreen = () => {
         style={styles.firstRowView}
       >
         <TouchableOpacity
-          onPress={() => updateImage()}
+          onPress={() => pickAndUploadImage()}
         >
           <Image
             style={styles.mainImg}
