@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 
-const AuthButton = ({onPress, buttonActive}) => {
+const AuthButton = ({onPress, buttonActive, label}) => {
   return (
     buttonActive? 
       <Button 
@@ -10,7 +10,7 @@ const AuthButton = ({onPress, buttonActive}) => {
       style={styles.submitButtonActive}
       labelStyle={styles.buttonLabel}
     >
-      Login/Signup
+      {label}
     </Button>
   
       :
@@ -20,7 +20,7 @@ const AuthButton = ({onPress, buttonActive}) => {
       style={styles.submitButtonInactive}
       labelStyle={styles.buttonLabel}
     >
-        Login/Signup
+        {label}
     </Button>
   )
 };

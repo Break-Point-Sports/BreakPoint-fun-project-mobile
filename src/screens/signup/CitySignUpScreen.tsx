@@ -2,13 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
-import { updateGender } from '../../redux/slices/userSlice';
+import { updateCity } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
-const GenderSignUpScreen = () => {
+const CitySignUpScreen = () => {
   const navigation = useNavigation(); 
   const dispatch = useDispatch();
-  const gender = useSelector(state => state.user.gender)
+  const gender = useSelector(state => state.user.city)
 
   return (
     <View
@@ -19,35 +19,23 @@ const GenderSignUpScreen = () => {
         color={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-city')}
+        onPress={() => navigation.navigate('signup-level')}
         disabled={gender === '' ? true : false}
       />
       <Text
         style={styles.whatsUrName}
       >
-        What's your gender?
+        What city are you in (we are only in Denver currently)?
       </Text>
       <View
         style={styles.radioButtonView}
       >
         <Button
-          mode={ gender === 'male' ? 'contained' : 'outlined' }
+          mode={ gender === 'denver' ? 'contained' : 'outlined' }
           style={styles.button}
-          onPress={() => dispatch(updateGender('male'))}
+          onPress={() => dispatch(updateCity('denver'))}
         >
-         Male
-        </Button>
-      </View>
-
-      <View
-        style={styles.radioButtonView}
-      >
-        <Button
-          mode={ gender === 'female' ? 'contained' : 'outlined' }
-          style={styles.button}
-          onPress={() => dispatch(updateGender('female'))}
-        >
-         Female
+         Denver
         </Button>
       </View>
     </View>
@@ -87,7 +75,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default GenderSignUpScreen;
+export default CitySignUpScreen;
 
 
 

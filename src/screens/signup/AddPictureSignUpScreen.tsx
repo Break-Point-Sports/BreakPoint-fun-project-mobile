@@ -20,29 +20,38 @@ const AddPictureSignUpScreen = () => {
   const lastName = useSelector(state => state.user.lastName)
   const birthday = useSelector(state => state.user.birthday)
   const gender = useSelector(state => state.user.gender)
+  const city = useSelector(state => state.user.city)
+  const tennisLevel = useSelector(state => state.user.tennisLevel)
  
 
   const onPressArrow = async() => {
-    // await createProfile();
-    navigation.navigate('home');
+    try {
+      await uploadImage();
+      await createProfile();
+      navigation.navigate('home');
+    }
+    catch (error) {
+      alert("Castastrophic failure. You will now die.")
+      console.log(error)
+    }
+
   }
 
-  const pickAndUploadImage = async() => {
+  const callPickImage = async() => {
     const pickedImage = await pickImage();
     const imageAsset = pickedImage.assets[0];
     const imageURI = imageAsset.uri;
-    const imageBlob = await getBlob(imageURI);
+    setImageURL(imageURI);
+  }
+
+  const uploadImage = async() => {
+
+    const imageBlob = await getBlob(imageURL);
 
     const S3URL = await callUdateProfilePicLambdaAndGetS3URL();
     console.log(S3URL);
-
-    try {
-      await callS3PresignedUrlAndUploadImage(S3URL, imageBlob)
-      setImageURL(imageURI);
-    } catch (error) {
-      console.log(error);
-      alert("Castastrophic failure. You will now die.")
-    }
+    
+    await callS3PresignedUrlAndUploadImage(S3URL, imageBlob)
   }
 
   const callUdateProfilePicLambdaAndGetS3URL = async() => {
@@ -77,33 +86,37 @@ const AddPictureSignUpScreen = () => {
     console.log(response2);
   }
 
-  // const createProfile = async() => {
-  //   console.log("Calling createNewUser Lambda Function")
-  //   console.log(cognitoId)
-  //   console.log(phoneNumber)
+  const createProfile = async() => {
+    console.log("Calling createNewUser Lambda Function")
+    console.log(cognitoId)
+    console.log(phoneNumber)
 
-  //   try {
-  //     const response = await fetch(CREATE_NEW_USER_LAMBDA_URL, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         cognitoId: cognitoId,
-  //         phoneNumber: phoneNumber,
-  //         name: name,
-  //         birthday: birthday,
-  //         whereDoYouLive: whereDoYouLive,
-  //         gender: gender,
-  //       }),
-  //     });
+    const body = JSON.stringify({
+      cognitoId: cognitoId,
+      phoneNumber: phoneNumber,
+      firstName: firstName,
+      lastName: lastName,
+      birthday: birthday,
+      gender: gender,
+      city: city,
+      tennisLevel: tennisLevel
+    })
+    console.log(body);
+    
 
-  //     console.log("successfully called lambda")
-  //   }
-  //   catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+    const response = await fetch(CREATE_NEW_USER_LAMBDA_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: body
+    });
+
+    if (response.status == 400) {
+      throw new Error("400 error from server");
+    }
+    console.log("successfully called lambda")
+  }
 
   return (
     <View
@@ -126,7 +139,7 @@ const AddPictureSignUpScreen = () => {
         style={styles.firstRowView}
       >
         <TouchableOpacity
-          onPress={() => pickAndUploadImage()}
+          onPress={() => callPickImage()}
         >
           <Image
             style={styles.mainImg}

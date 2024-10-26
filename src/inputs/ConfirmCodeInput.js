@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
-const ConfirmCodeInput = () => {
+const ConfirmCodeInput = ({setConfirmButtonActive}) => {
   const refInputOne = useRef();
   const refInputTwo = useRef();
   const refInputThree = useRef();
@@ -47,6 +47,7 @@ const ConfirmCodeInput = () => {
   const onInput = (target, value ) => {
     if (value === '') {
       setCode[target]('');
+      setConfirmButtonActive(false);
       return;
     }
     if (!/^[0-9]*$/.test(value) || (value.length > (6 - target))) {
@@ -59,6 +60,11 @@ const ConfirmCodeInput = () => {
 
     if (target + value.length <= 5) {
       refs[target + value.length].current.focus()
+    }
+
+    console.log(sixthDigit);
+    if (target == 5){
+      setConfirmButtonActive(true);
     }
   };
 
@@ -139,6 +145,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#9C11E6',
     borderRadius: 28,
+    marginBottom: 5
   },
   codeTextInput: {
     width: 40,

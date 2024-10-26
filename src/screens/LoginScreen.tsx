@@ -12,50 +12,55 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const [countryCode, setCountryCode] = useState('+1');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [country, setCountry] =
-    useState<null | ICountry>(null);
+  const [country, setCountry] = useState<null | ICountry>(null);
   const [showIndicator, setShowIndicator] = useState(false);
-  const [buttonActive, setButtonActive] = useState(true);
+  const [buttonActive, setButtonActive] = useState(false);
   const confirmCodeScreenIdentifier: string = 'confirmCode';
 
   const phoneNumberOnSubmit = async () => {
-    console.log(countryCode + phoneNumber)
+    const phoneNoSpacesPlusCountryCode = countryCode + phoneNumber.replace(/\s/g, "")
+    console.log(phoneNoSpacesPlusCountryCode)
     setShowIndicator(true);
-    dispatch(updateCognitoId('123456'));
-    dispatch(updatePhoneNumber(phoneNumber));
     try {
-      // const { nextStep } = await signIn({
-      //   username: countryCode + phoneNumber.replace(/\s/g, ""),
-      //   password: "password",
-      // })
-      console.log('successfully sent login code to: ' + countryCode + phoneNumber)
-
+      const {nextStep} = await signIn({
+        username: phoneNoSpacesPlusCountryCode,
+        password: "password",
+      })
+      console.log('successfully sent login code to: ' + phoneNoSpacesPlusCountryCode)
       // console.log(nextStep);
-
       navigation.navigate(confirmCodeScreenIdentifier)
 
     } catch (error) {
       console.log(error);
 
       try {
-        await sendSignUpCode(countryCode, phoneNumber)
-        console.log('successfully sent sign up code to: ' + countryCode + phoneNumber)
+        const cognitoId = await sendSignUpCode(phoneNoSpacesPlusCountryCode);
+        dispatch(updateCognitoId(cognitoId));
+        dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
+        console.log('successfully sent sign up code to: ' + phoneNoSpacesPlusCountryCode);
         navigation.navigate(confirmCodeScreenIdentifier)
 
       } catch (error) {
         console.log(error);
+        alert("Something went wrong. Please restart application and try again.");
+        dispatch(updateCognitoId("e428a408-40c1-709f-bf81-2bc77af7fc33"));
+        dispatch(updatePhoneNumber("+13037264490"));
+        navigation.navigate(confirmCodeScreenIdentifier)
       }
     }
     setShowIndicator(false);
   };
   
-  const sendSignUpCode = async (countryCode, phoneNumber) => {
-    console.log(countryCode + phoneNumber)
+  const sendSignUpCode = async (phoneAndCountryCode) => {
+    console.log(phoneAndCountryCode)
       const { isSignUpComplete, userId, nextStep } = await signUp({
-        username: countryCode + phoneNumber.replace(/\s/g, ""),
+        username: phoneAndCountryCode,
         password: "password",
       });
-    console.log(userId)
+    console.log(isSignUpComplete);
+    console.log(userId);
+    console.log(nextStep);
+    return userId;
   };
 
   function onSelectCountry(country) {
@@ -115,6 +120,7 @@ const LoginScreen = ({ navigation }) => {
             <AuthButton 
               onPress={phoneNumberOnSubmit}
               buttonActive={buttonActive}
+              label={"Login/Signup"}
             />
         }
 

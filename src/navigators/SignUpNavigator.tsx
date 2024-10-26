@@ -5,6 +5,8 @@ import LastNameSignUpScreen from '../screens/signup/LastNameSignUpScreen';
 import BirthdaySignUpScreen from '../screens/signup/BirthdaySignUpScreen';
 import GenderSignUpScreen from '../screens/signup/GenderSignUpScreen';
 import AddPictureSignUpScreen from '../screens/signup/AddPictureSignUpScreen';
+import TennisLevelSignUpScreen  from '../screens/signup/TennisLevelSignUpScreen';
+import CitySignUpScreen from '../screens/signup/CitySignUpScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +16,7 @@ const SignUpNavigator = () => (
       gestureEnabled: false
     }}
   >
-    {/* <Stack.Screen 
+    <Stack.Screen 
       name="signup-first-name" 
       component={FirstNameSignUpScreen} 
       options={{
@@ -41,7 +43,21 @@ const SignUpNavigator = () => (
       options={{
         headerShown: false,
       }}
-    /> */}
+    />
+    <Stack.Screen 
+      name='signup-city'
+      component={CitySignUpScreen} 
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen 
+      name='signup-level'
+      component={TennisLevelSignUpScreen} 
+      options={{
+        headerShown: false,
+      }}
+    />
     <Stack.Screen 
       name='signup-picture'
       component={AddPictureSignUpScreen} 

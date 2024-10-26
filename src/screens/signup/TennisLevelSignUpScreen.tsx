@@ -2,13 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
-import { updateGender } from '../../redux/slices/userSlice';
+import { updateTennisLevel } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
-const GenderSignUpScreen = () => {
+const TennisLevelSignUpScreen = () => {
   const navigation = useNavigation(); 
   const dispatch = useDispatch();
-  const gender = useSelector(state => state.user.gender)
+  const tennisLevel = useSelector(state => state.user.tennisLevel)
 
   return (
     <View
@@ -19,23 +19,23 @@ const GenderSignUpScreen = () => {
         color={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-city')}
-        disabled={gender === '' ? true : false}
+        onPress={() => navigation.navigate('signup-picture')}
+        disabled={tennisLevel === '' ? true : false}
       />
       <Text
         style={styles.whatsUrName}
       >
-        What's your gender?
+        What's your tennis level?
       </Text>
       <View
         style={styles.radioButtonView}
       >
         <Button
-          mode={ gender === 'male' ? 'contained' : 'outlined' }
+          mode={ tennisLevel === 'beginner' ? 'contained' : 'outlined' }
           style={styles.button}
-          onPress={() => dispatch(updateGender('male'))}
+          onPress={() => dispatch(updateTennisLevel('beginner'))}
         >
-         Male
+         Beginner (1.5-1.9)
         </Button>
       </View>
 
@@ -43,11 +43,33 @@ const GenderSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
-          mode={ gender === 'female' ? 'contained' : 'outlined' }
+          mode={ tennisLevel === 'intermediate' ? 'contained' : 'outlined' }
           style={styles.button}
-          onPress={() => dispatch(updateGender('female'))}
+          onPress={() => dispatch(updateTennisLevel('intermediate'))}
         >
-         Female
+         Intermediate (2.0-2.9)
+        </Button>
+      </View>
+      <View
+        style={styles.radioButtonView}
+      >
+        <Button
+          mode={ tennisLevel === 'competitive' ? 'contained' : 'outlined' }
+          style={styles.button}
+          onPress={() => dispatch(updateTennisLevel('competitive'))}
+        >
+         Competitive (3.0-3.9)
+        </Button>
+      </View>
+      <View
+        style={styles.radioButtonView}
+      >
+        <Button
+          mode={ tennisLevel === 'advanced' ? 'contained' : 'outlined' }
+          style={styles.button}
+          onPress={() => dispatch(updateTennisLevel('advanced'))}
+        >
+         Advanced (4.0+)
         </Button>
       </View>
     </View>
@@ -87,7 +109,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default GenderSignUpScreen;
+export default TennisLevelSignUpScreen;
 
 
 

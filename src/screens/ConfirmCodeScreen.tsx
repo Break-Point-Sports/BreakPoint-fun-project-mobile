@@ -1,29 +1,45 @@
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import ConfirmCodeInput from '../inputs/ConfirmCodeInput';
-import { IconButton, Button } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
+import AuthButton from '../buttons/AuthButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
+import { updateFirstName, updateLastName, updateGender, updateTennisLevel, updatePhoneNumber, updateBirthday,
+  } from '../redux/slices/userSlice';
 
-const GET_PROFILE_INFO_LAMBDA_URL = ''; // TODO: Create lambda function and update the URL here
+const GET_PROFILE_INFO_LAMBDA_URL = 'https://slddbrgayjyj7gl6iyb6g3weby0naeoj.lambda-url.us-east-1.on.aws';
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
+  const [buttonActive, setButtonActive] = useState(false);
   const cognitoId = useSelector(state => state.user.cognitoId)
   const dispatch = useDispatch();
 
   const onPress = async() => {
     setShowIndicator(true);
     console.log('Getting user profile info for user: ' + cognitoId)
-    try {      
-      // await updateUserInfo();
-      throw 'signing up new user' // TODO: Get rid of this, just using it for testing
-      navigation.navigate('home')
+    try {
+      await updateUserInfo();
+      navigation.navigate('home');
     } catch(error) {
       console.log(error)
       navigation.navigate('signup')
-
     }
+  }
 
+  const updateUserInfo = async() => {
+    const URI =GET_PROFILE_INFO_LAMBDA_URL + '/?cognitoId='+ cognitoId;
+    console.log("Fetching " + URI);
+    const response = await fetch(URI, {method: 'GET'});
+    
+    const body = await response.json();
+    console.log(body);
+
+    dispatch(updateFirstName(body.firstName));
+    dispatch(updateLastName(body.lastName));
+    dispatch(updateBirthday(body.birthday));
+    dispatch(updateGender(body.gender));
+    dispatch(updateTennisLevel(body.tennisLevel));
   }
 
   return (
@@ -40,7 +56,9 @@ const ConfirmCodeScreen = ( {navigation} ) => {
       <View
         style={styles.confirmCodeInputWrapper}
       >
-        <ConfirmCodeInput />
+        <ConfirmCodeInput 
+          setConfirmButtonActive={setButtonActive}
+        />
 
         { showIndicator ? 
 
@@ -52,14 +70,11 @@ const ConfirmCodeScreen = ( {navigation} ) => {
 
         :
         
-          <Button 
-            mode="contained" 
-            onPress={() => onPress()}
-            style={styles.submitButton}
-            labelStyle={styles.buttonLabel}
-          >
-            Confirm
-          </Button>
+          <AuthButton 
+            onPress={onPress}
+            buttonActive={buttonActive}
+            label={"Confirm"}
+          />
         }
 
       </View>
