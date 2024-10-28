@@ -20,6 +20,9 @@ const BottomNavigatorCustom = ({ navigation }) => {
       case 2:
         navigation.navigate('messaging')
         break
+      case 3:
+        navigation.navigate('shopping')
+        break
     }
     setIndex(newIndex);
   }
@@ -53,6 +56,13 @@ const BottomNavigatorCustom = ({ navigation }) => {
           size={40}
           style={styles.settingsIcon}
           onPress={() => handleClick(2)}
+        />
+        <IconButton
+          icon='shopping'
+          iconColor={index === 3 ? '#9C11E6': 'grey'}
+          size={40}
+          style={styles.settingsIcon}
+          onPress={() => handleClick(3)}
         />
       </View>
     </View>

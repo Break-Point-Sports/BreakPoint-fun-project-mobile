@@ -1,11 +1,11 @@
-import { StyleSheet, Switch, Text, View, TouchableOpacity } from 'react-native';
-import { useRef, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useRef } from 'react';
 import { Button } from 'react-native-paper';
 import EditProfileDrawer from '../drawers/EditProfileDrawer';
 import SettingsDrawer from '../drawers/SettingsDrawer';
 import { useDispatch, useSelector } from 'react-redux'
 import { Image } from 'expo-image';
-
+import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
 
 const LAMBDA_URL = "https://icyermwacrdp6r27mt52xu2agi0cthyz.lambda-url.us-east-1.on.aws/";
@@ -20,30 +20,10 @@ const ProfileScreen = ({ navigation }) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
 
-  useEffect(() => {
-    if (pictureOneURL === '') {
-      setProfileImage()
-    }
-  });
-
   const logout = () => {
     navigation.navigate('login')
   }
 
-
-  const getProfileImage = async(imageName, updateFunction) => {
-    const response = await fetch(LAMBDA_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        cognitoId: cognitoId,
-        filename: imageName
-      }),
-    });
-    dispatch(updateFunction(await response.json()))
-  }
 
   return (
     <View
@@ -54,7 +34,7 @@ const ProfileScreen = ({ navigation }) => {
       >
         <Image
           style={styles.profileImg}
-          source={{uri: pictureOneURL}}
+          source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${cognitoId}/profile_pic.jpg`}}
         />
       </TouchableOpacity>
       <Text

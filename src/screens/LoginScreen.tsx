@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
       } catch (error) {
         console.log(error);
         alert("Something went wrong. Please restart application and try again.");
-        dispatch(updateCognitoId("e428a408-40c1-709f-bf81-2bc77af7fc33"));
+        dispatch(updateCognitoId("44882448-8091-7070-b09b-dda8cd26a1b4"));
         dispatch(updatePhoneNumber("+13037264490"));
         navigation.navigate(confirmCodeScreenIdentifier)
       }

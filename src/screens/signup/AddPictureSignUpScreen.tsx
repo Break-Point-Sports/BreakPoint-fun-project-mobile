@@ -83,6 +83,9 @@ const AddPictureSignUpScreen = () => {
       method: 'PUT',
       body: imageBlob
     });
+    if (response2.status != 200) {
+      throw new Error("couldn't save profile pic to s3");
+    }
     console.log(response2);
   }
 
