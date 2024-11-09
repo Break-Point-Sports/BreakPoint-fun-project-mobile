@@ -1,12 +1,12 @@
 import { StyleSheet, Image, View, TextInput, ActivityIndicator } from 'react-native';
 import AuthButton from '../buttons/AuthButton';
-import { signIn, signUp } from 'aws-amplify/auth';
+import { signIn, signUp, getCurrentUser } from 'aws-amplify/auth';
 import PhoneInput, {ICountry} from 'react-native-international-phone-number';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import { updatePhoneNumber } from '../redux/slices/userSlice';
 import { updateCognitoId } from '../redux/slices/userSlice'
-
+import { confirmCodeScreenIdentifier, homeScreenIdentifier, signUpNavigatorIdentifier } from '../util/Constants';
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -15,38 +15,83 @@ const LoginScreen = ({ navigation }) => {
   const [country, setCountry] = useState<null | ICountry>(null);
   const [showIndicator, setShowIndicator] = useState(false);
   const [buttonActive, setButtonActive] = useState(false);
-  const confirmCodeScreenIdentifier: string = 'confirmCode';
+
+
+  const PASSWORD = "password";
 
   const phoneNumberOnSubmit = async () => {
     const phoneNoSpacesPlusCountryCode = countryCode + phoneNumber.replace(/\s/g, "")
     console.log(phoneNoSpacesPlusCountryCode)
     setShowIndicator(true);
     try {
+      console.log("Trying to sign in user");
       const {nextStep} = await signIn({
         username: phoneNoSpacesPlusCountryCode,
-        password: "password",
+        password: PASSWORD,
+        options: {
+          authFlowType: 'USER_PASSWORD_AUTH'
+      }
       })
-      console.log('successfully sent login code to: ' + phoneNoSpacesPlusCountryCode)
-      // console.log(nextStep);
-      navigation.navigate(confirmCodeScreenIdentifier)
 
-    } catch (error) {
+      const { userId } = await getCurrentUser();
+      dispatch(updateCognitoId(userId));
+      dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
+
+      // For now we will just use user password auth since we dont have mfa set up
+      console.log(nextStep);
+      console.log("Successfully signed in: " + phoneNoSpacesPlusCountryCode)
+
+      
+      navigation.navigate(homeScreenIdentifier);
+
+      // console.log('successfully sent login code to: ' + phoneNoSpacesPlusCountryCode)
+      // console.log(nextStep);
+
+    }  catch (error) {
       console.log(error);
 
-      try {
-        const cognitoId = await sendSignUpCode(phoneNoSpacesPlusCountryCode);
-        dispatch(updateCognitoId(cognitoId));
+      if (error.name == "UserAlreadyAuthenticatedException") {
+        const { userId } = await getCurrentUser();
+        dispatch(updateCognitoId(userId));
         dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
-        console.log('successfully sent sign up code to: ' + phoneNoSpacesPlusCountryCode);
-        navigation.navigate(confirmCodeScreenIdentifier)
+        navigation.navigate(homeScreenIdentifier);
+      }
+      
+      try {
+        console.log("Signing up user")
+        const { isSignUpComplete, userId, nextStep} = await signUp({
+          username: phoneNoSpacesPlusCountryCode,
+          password: PASSWORD,
+        });
+
+        dispatch(updateCognitoId(userId));
+        dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
+
+        console.log(userId);
+        console.log(nextStep);
+
+        navigation.navigate(signUpNavigatorIdentifier)
 
       } catch (error) {
-        console.log(error);
-        alert("Something went wrong. Please restart application and try again.");
-        dispatch(updateCognitoId("44882448-8091-7070-b09b-dda8cd26a1b4"));
-        dispatch(updatePhoneNumber("+13037264490"));
-        navigation.navigate(confirmCodeScreenIdentifier)
+        console.log(error)
       }
+
+
+      // try {
+      //   const cognitoId = await sendSignUpCode(phoneNoSpacesPlusCountryCode);
+      //   dispatch(updateCognitoId(cognitoId));
+      //   dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
+      //   console.log('successfully sent sign up code to: ' + phoneNoSpacesPlusCountryCode);
+      //   // navigation.navigate(confirmCodeScreenIdentifier)
+
+      // } catch (error) {
+      //   console.log(error);
+      //   alert("Something went wrong. Please restart application and try again.");
+      //   // dispatch(updateCognitoId("94685448-3081-70c2-efe8-e0b597ec998f"));
+      //   // dispatch(updatePhoneNumber("+13037264490"));
+      //   // TODO: remove following line once we can start sending codes
+      //   // navigation.navigate(confirmCodeScreenIdentifier)
+      // }
     }
     setShowIndicator(false);
   };

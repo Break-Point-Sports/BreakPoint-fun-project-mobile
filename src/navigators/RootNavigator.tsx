@@ -3,7 +3,7 @@ import LoginScreen from '../screens/LoginScreen';
 import ConfirmCodeScreen from '../screens/ConfirmCodeScreen';
 import PageNavigatorContainer from './PageNavigatorContainer';
 import SignUpNavigator from './SignUpNavigator';
-
+import { confirmCodeScreenIdentifier, signUpNavigatorIdentifier } from '../util/Constants';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,14 +28,14 @@ const RootNavigator = () => (
       }}
     />
     <Stack.Screen
-      name="confirmCode"
+      name={confirmCodeScreenIdentifier}
       component={ ConfirmCodeScreen }
       options={{
         headerShown: false,
       }}
     />
     <Stack.Screen 
-      name="signup" 
+      name={signUpNavigatorIdentifier} 
       component={SignUpNavigator} 
       options={{
         headerShown: false,

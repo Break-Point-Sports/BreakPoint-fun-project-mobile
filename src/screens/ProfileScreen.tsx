@@ -5,10 +5,8 @@ import EditProfileDrawer from '../drawers/EditProfileDrawer';
 import SettingsDrawer from '../drawers/SettingsDrawer';
 import { useDispatch, useSelector } from 'react-redux'
 import { Image } from 'expo-image';
+import { signOut } from 'aws-amplify/auth';
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
-
-
-const LAMBDA_URL = "https://icyermwacrdp6r27mt52xu2agi0cthyz.lambda-url.us-east-1.on.aws/";
 
 const ProfileScreen = ({ navigation }) => {
   const editProfileRef = useRef();
@@ -20,7 +18,8 @@ const ProfileScreen = ({ navigation }) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
 
-  const logout = () => {
+  const logout = async () => {
+    await signOut();
     navigation.navigate('login')
   }
 

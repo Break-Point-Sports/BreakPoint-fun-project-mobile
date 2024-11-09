@@ -4,10 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import pickImage from '../../util/PickImage'
+import { UPDATE_PROFILE_PIC_LAMBDA_URL, CREATE_NEW_USER_LAMBDA_URL } from '../../util/Constants';
 
-
-const UPDATE_PROFILE_PIC_LAMBDA_URL = "https://27ksr4utemgyckb4nxqb62wkcq0xnsfk.lambda-url.us-east-1.on.aws/";
-const CREATE_NEW_USER_LAMBDA_URL = "https://b54tz6kjxddxjhn6d2aqbfvvfm0tcktv.lambda-url.us-east-1.on.aws/"
 
 const AddPictureSignUpScreen = () => {
   const navigation = useNavigation();

@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useRef } from "react";
 
 
-const ADD_PHOTO_LAMBDA_URL = "";
-const GET_PROFILE_IMAGE_URL = "";
+// const ADD_PHOTO_LAMBDA_URL = "";
+// const GET_PROFILE_IMAGE_URL = "";
 
 const EditProfileDrawer = ({ editProfileRef }) => {
   const [showActivityIndicatorImg1, setShowActivityIndicatorImg1] = useState(false)
