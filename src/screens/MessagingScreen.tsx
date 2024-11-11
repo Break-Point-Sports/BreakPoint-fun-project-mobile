@@ -2,8 +2,9 @@ import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import ConversationItem from '../random/ConversationItem';
 import { useEffect } from 'react';
-import {listRooms} from '../graphql/queries';
 import { generateClient } from 'aws-amplify/data';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { listRooms } from '../graphql/queries';
 
 const MessagingScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
@@ -25,6 +26,22 @@ const MessagingScreen = () => {
   
 
   const getMessages = async() => {    
+    try {
+      const session = await fetchAuthSession();
+
+      const client = generateClient({
+        authMode: 'userPool',
+        authToken: session.tokens.accessToken.toString()
+      });
+      
+      console.log("Calling client")
+      const result = await client.graphql({query: listRooms})
+      console.log(result)
+
+    } catch (error) {
+      console.log(error);
+
+    }
     
   }
 
