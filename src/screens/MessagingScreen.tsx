@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import ConversationItem from '../random/ConversationItem';
-
-
+import { useEffect } from 'react';
+import {listRooms} from '../graphql/queries';
+import { generateClient } from 'aws-amplify/data';
 
 const MessagingScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
@@ -12,6 +12,23 @@ const MessagingScreen = () => {
 
   const messages = [] // temp placeholder
 
+
+
+  useEffect(() => {
+
+    getMessages()
+
+    // console.log("Messages")
+    // console.log(result)
+
+  }, []);
+  
+
+  const getMessages = async() => {    
+    
+  }
+
+  
 
   return (
     <View
