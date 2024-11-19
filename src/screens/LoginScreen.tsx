@@ -1,6 +1,6 @@
 import { StyleSheet, Image, View, TextInput, ActivityIndicator } from 'react-native';
 import AuthButton from '../buttons/AuthButton';
-import { signIn, signUp, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { signIn, signUp, getCurrentUser } from 'aws-amplify/auth';
 import PhoneInput, {ICountry} from 'react-native-international-phone-number';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
@@ -15,6 +15,8 @@ const LoginScreen = ({ navigation }) => {
   const [country, setCountry] = useState<null | ICountry>(null);
   const [showIndicator, setShowIndicator] = useState(false);
   const [buttonActive, setButtonActive] = useState(false);
+  const [reloadKey, setReloadKey] = useState('r');
+
 
 
   const PASSWORD = "password";
@@ -35,10 +37,6 @@ const LoginScreen = ({ navigation }) => {
 
       console.log("fetching user id")
       const { userId } = await getCurrentUser();
-
-      console.log("fetching auth session")
-      const session = await fetchAuthSession();
-      console.log(session.tokens.accessToken)
 
       dispatch(updateCognitoId(userId));
       dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
@@ -121,8 +119,10 @@ const LoginScreen = ({ navigation }) => {
   function onChangePhoneNumber(phoneNumber: string) {
     if (phoneNumber.replace(/\s/g, "").length === 10) {
       setButtonActive(true);
+      setReloadKey('r1');
     } else {
       setButtonActive(false);
+      setReloadKey('r2');
     }
     setPhoneNumber(phoneNumber);
   }
@@ -171,6 +171,7 @@ const LoginScreen = ({ navigation }) => {
             <AuthButton 
               onPress={phoneNumberOnSubmit}
               buttonActive={buttonActive}
+              key={reloadKey}
               label={"Login/Signup"}
             />
         }

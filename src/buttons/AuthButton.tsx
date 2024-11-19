@@ -5,23 +5,23 @@ const AuthButton = ({onPress, buttonActive, label}) => {
   return (
     buttonActive? 
       <Button 
-      mode="contained" 
-      onPress={onPress}
-      style={styles.submitButtonActive}
-      labelStyle={styles.buttonLabel}
-    >
+        mode="contained" 
+        onPress={onPress}
+        style={styles.submitButtonActive}
+        labelStyle={styles.buttonLabel}
+      >
       {label}
     </Button>
   
       :
       <Button 
-      mode="contained"
-      disabled={true} 
-      style={styles.submitButtonInactive}
-      labelStyle={styles.buttonLabel}
-    >
+        mode="contained"
+        disabled={true} 
+        style={styles.submitButtonInactive}
+        labelStyle={styles.buttonLabel}
+      >
         {label}
-    </Button>
+      </Button>
   )
 };
 

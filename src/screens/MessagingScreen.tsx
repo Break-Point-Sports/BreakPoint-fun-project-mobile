@@ -59,12 +59,6 @@ const MessagingScreen = () => {
     <View
       style={styles.root}
     > 
-      <Text
-        style={styles.likesText}
-      >
-        Messaging
-      </Text>
-      
       {
         rooms.length == 0 ? 
           <Text>
