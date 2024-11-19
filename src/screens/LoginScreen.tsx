@@ -46,7 +46,7 @@ const LoginScreen = ({ navigation }) => {
       console.log("Successfully signed in: " + phoneNoSpacesPlusCountryCode)
 
       
-      navigation.navigate(homeScreenIdentifier);
+      navigation.navigate(confirmCodeScreenIdentifier);
 
       // console.log('successfully sent login code to: ' + phoneNoSpacesPlusCountryCode)
       // console.log(nextStep);
@@ -74,7 +74,7 @@ const LoginScreen = ({ navigation }) => {
         console.log(userId);
         console.log(nextStep);
 
-        // navigation.navigate(signUpNavigatorIdentifier)
+        navigation.navigate(confirmCodeScreenIdentifier)
 
       } catch (error) {
         console.log(error)

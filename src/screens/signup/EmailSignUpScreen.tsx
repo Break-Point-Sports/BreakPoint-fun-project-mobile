@@ -2,12 +2,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux'
-import { updateLastName } from '../../redux/slices/userSlice';
+import { updateEmail } from '../../redux/slices/userSlice';
 
-const LastNameSignUpScreen = () => {
+const EmailSignUpScree  = () => {
   const navigation = useNavigation(); 
   const dispatch = useDispatch();
-  const lastName = useSelector(state => state.user.lastName)
+  const email = useSelector(state => state.user.email)
 
   return (
     <View
@@ -18,19 +18,19 @@ const LastNameSignUpScreen = () => {
         iconColor={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-email')}
-        disabled={lastName === '' ? true : false}
+        onPress={() => navigation.navigate('signup-birthday')}
+        disabled={email === '' ? true : false}
       />
       <Text
-        style={styles.whatsUrName}
+        style={styles.whatsUrEmail}
       >
-        What's your last name?
+        What's your email?
       </Text>
       <TextInput
         mode='outlined'
         style={styles.textInput}
-        value={lastName}
-        onChangeText={(text) => dispatch(updateLastName(text))}
+        value={email}
+        onChangeText={(text) => dispatch(updateEmail(text))}
       />
     </View>
   )
@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
     width: 300,
     alignSelf: 'center',
   },
-  whatsUrName: {
+  whatsUrEmail: {
     fontSize: 24,
     alignSelf: 'center'
   },
 })
 
-export default LastNameSignUpScreen;
+export default EmailSignUpScree;
 
 
 

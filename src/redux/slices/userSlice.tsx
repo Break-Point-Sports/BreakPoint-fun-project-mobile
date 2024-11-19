@@ -5,12 +5,15 @@ export const userSlice = createSlice({
   initialState: {
     cognitoId: '',
     phoneNumber: '',
+    email: '',
     firstName: '',
     lastName: ''
 ,   birthday: '',
     gender: '',
     tennisLevel: '',
-    city: ''
+    city: '',
+    currentLeague: 'none',
+    pastLeagues: []
   },
   reducers: {
     updateCognitoId: (state, action) => {
@@ -18,6 +21,9 @@ export const userSlice = createSlice({
     },
     updatePhoneNumber: (state, action) => {
       state.phoneNumber = action.payload
+    },
+    updateEmail: (state, action) => {
+      state.email = action.payload
     },
     updateFirstName: (state, action) => {
       state.firstName = action.payload
@@ -36,6 +42,12 @@ export const userSlice = createSlice({
     },
     updateCity: (state, action) => {
       state.city = action.payload
+    },
+    updateCurrentLeague: (state, action) => {
+      state.currentLeague = action.payload
+    },
+    updatePastLeagues: (state, action) => {
+      state.pastLeagues = action.payload
     }
   }
 })
@@ -43,6 +55,6 @@ export const userSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {updateCognitoId, updatePhoneNumber, updateFirstName, 
   updateLastName, updateBirthday, updateGender, updateTennisLevel, 
-  updateCity} = userSlice.actions
+  updateCity, updateCurrentLeague, updatePastLeagues, updateEmail} = userSlice.actions
 
 export default userSlice.reducer

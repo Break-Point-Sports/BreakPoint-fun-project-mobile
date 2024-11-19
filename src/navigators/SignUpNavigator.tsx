@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import FirstNameSignUpScreen from '../screens/signup/FirstNameSignUpScreen';
 import LastNameSignUpScreen from '../screens/signup/LastNameSignUpScreen';
+import EmailSignUpScreen from '../screens/signup/EmailSignUpScreen';
 import BirthdaySignUpScreen from '../screens/signup/BirthdaySignUpScreen';
 import GenderSignUpScreen from '../screens/signup/GenderSignUpScreen';
 import AddPictureSignUpScreen from '../screens/signup/AddPictureSignUpScreen';
@@ -26,6 +27,13 @@ const SignUpNavigator = () => (
     <Stack.Screen 
       name="signup-last-name" 
       component={LastNameSignUpScreen} 
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen 
+      name="signup-email" 
+      component={EmailSignUpScreen} 
       options={{
         headerShown: false,
       }}

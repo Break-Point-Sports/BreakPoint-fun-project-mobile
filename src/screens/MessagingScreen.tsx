@@ -1,16 +1,18 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState } from 'react';
-import { IconButton } from 'react-native-paper';
-
-import ConversationItem from '../random/ConversationItem';
+import { useState, useRef } from 'react';
+import { Button } from 'react-native-paper';
 import { useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { listRooms } from '../graphql/queries';
 
+import NewMessageDrawer from '../drawers/NewMessageDrawer';
+import ConversationItem from '../random/ConversationItem';
+
 const MessagingScreen = () => {
   const [rooms, setRooms] = useState([]);
+  const newMessageRef = useRef();
   const cognitoId = useSelector(state => state.user.cognitoId)
   // const matches = useSelector(state => state.matches.matches)
   const dispatch = useDispatch();
@@ -56,38 +58,56 @@ const MessagingScreen = () => {
   }
 
   return (
-    <View
-      style={styles.root}
-    > 
-      {
-        rooms.length == 0 ? 
-          <Text>
-            No Messages Yet.
-          </Text>
-        :
+    <>
+      <View
+        style={styles.root}
+      > 
+        {
+          rooms.length == 0 ? 
           <>
-            <ScrollView
-              style={styles.conversations}
-            >
-              {rooms.map((room, key) => {
-                return <ConversationItem key={key}/>
-              })}
-            </ScrollView>
-            </>
-      }
-      {/* <IconButton
-        icon='arrow-right'
-        color={'grey'}
-        size={40}
-        style={styles.arrowIcon}
-        disabled={imageURL !== null ? false : true}
-        onPress={() => newMessage()}
-      /> */}
-    </View>
+          <ScrollView
+            style={styles.conversations}
+          >
+  
+          </ScrollView>
+          </>
+          :
+            <>
+              <ScrollView
+                style={styles.conversations}
+              >
+                {rooms.map((room, key) => {
+                  return <ConversationItem key={key}/>
+                })}
+              </ScrollView>
+              </>
+        }
+        <View
+          style={styles.buttonView}
+        >
+          <Button 
+            mode="contained" 
+            onPress={() => newMessageRef.current.open()}
+            style={styles.newMessageButton}
+            labelStyle={styles.newMessageButtonLabel}
+          >
+            {"New Message"}
+          </Button>
+        </View>
+      </View>
+      <NewMessageDrawer
+        newMessageRef={newMessageRef}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonView: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center'
+  },
   conversations: {
   },
   horizontalScrollView: {
@@ -105,6 +125,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     fontSize: 30,
     marginLeft:5
+  },
+  newMessageButton: {
+    display: 'flex',
+    width: 320,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#9C11E6',
+    justifyContent: 'center',
+  },
+  newMessageButtonLabel: {
+    fontSize: 18,
+    color: '#fff',
   },
   root: {
     display: 'flex',

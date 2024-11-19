@@ -10,7 +10,6 @@ import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
 const ProfileScreen = ({ navigation }) => {
   const editProfileRef = useRef();
-  const viewProfileRef = useRef();
   const settingsRef = useRef();
   const dispatch = useDispatch();
   const pictureOneURL = useSelector(state => state.user.pictureOneURL)
@@ -29,7 +28,7 @@ const ProfileScreen = ({ navigation }) => {
       style={styles.root}
     > 
       <TouchableOpacity
-        onPress={() => viewProfileRef.current.open()}
+        onPress={() => editProfileRef.current.open()}
       >
         <Image
           style={styles.profileImg}
@@ -47,13 +46,6 @@ const ProfileScreen = ({ navigation }) => {
         labelStyle={styles.label}
       >
         Edit Profile
-      </Button>
-      <Button
-        style={styles.missionButton}
-        onPress={() => settingsRef.current.open()}
-        labelStyle={styles.label}
-      >
-        Settings
       </Button>
       <Button
         style={styles.missionButton}
@@ -150,23 +142,36 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 100
   },
-  logoutButton: {
-    borderColor: 'black',
-    backgroundColor: '#9C11E6',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-  },
+  // logoutButton: {
+  //   borderColor: 'black',
+  //   backgroundColor: '#9C11E6',
+  //   borderWidth: 1,
+  //   marginBottom: 1,
+  //   textAlign: 'left',
+  //   padding: 0,
+  // },
   logoutButtonView: {
     height: '100%',
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  logoutButton: {
+    display: 'flex',
+    width: 320,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#9C11E6',
+    justifyContent: 'center',
   },
   logoutLabel: {
-    color: 'white'
-
+    fontSize: 18,
+    color: '#fff',
   },
+  // logoutLabel: {
+  //   color: 'white'
+
+  // },
   missionButton: {
     borderColor: 'black',
     borderWidth: 1,

@@ -1,17 +1,21 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, SegmentedButtons } from 'react-native-paper';
 
 const GET_USER_TOURNAMENTS_LAMBDA_URL = ''
 
 const LeaguesScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
+  const currentLeague = useSelector(state => state.user.currentLeague)
+  const pastLeagues = useSelector(state => state.user.pastLeagues)
+  const signUpForLeagueRef = useRef();
+  const submitScoreButton = useRef();
+
   // const tournaments = useSelector(state => state.tournaments.tournaments)
   const dispatch = useDispatch();
   const [toggleValue, setToggleValue] = useState('current');
 
-  const league = null; // temp place holder
 
 
   return (
@@ -37,17 +41,31 @@ const LeaguesScreen = () => {
 
         toggleValue === 'current' ?
 
-          league !== null ? 
+          currentLeague !== 'none' ? 
             <>
-              <Text
-                style={styles.yourLeagueText}
-              >
-                Your League
+              <Text>
+                Skill Level:
               </Text>
               <Text>
-                You aren't currently in a league.
+                Start Date:
               </Text>
+              <Text>
+                End Date:
+              </Text>
+              <Text>
+                Playoff Start Date:
+              </Text>
+              <Text>
+                Minimum wins to qualify for playoffs:
+              </Text>
+              <Text>
+                Players:
+              </Text>
+              <ScrollView>
+                
+              </ScrollView>
             </>
+
           :
 
 
@@ -67,11 +85,35 @@ const LeaguesScreen = () => {
               >
                 {"Join Now"}
               </Button>
-
             </View>
           :
-          <></>
+
+            pastLeagues.length > 0 ?
+              <></>
+            :
+              <View
+              style={styles.joinLeagueView}
+            >
+              <Text
+                style={styles.notCurrentLeagueText}
+              >
+                No past leagues to display
+              </Text>
+            </View>
       }
+        <View
+        style={styles.submitScoreButtonView}
+        >
+        <Button 
+            mode="contained" 
+            onPress={() => console.log(currentLeague)}
+            style={styles.submitScoreButton}
+            labelStyle={styles.submitScoreButtonLabel}
+          >
+            {"Submit Score"}
+          </Button>
+        </View>
+
     </View>
   );
 }
@@ -105,6 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
   },
+
   notCurrentLeagueText: {
     fontSize: 30,
     textAlign: 'center',
@@ -124,6 +167,23 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     backgroundColor: 'white',
+  },
+  submitScoreButton: {
+    display: 'flex',
+    width: 320,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#9C11E6',
+    justifyContent: 'center',
+  },
+  submitScoreButtonLabel: {
+    fontSize: 18,
+    color: '#fff',
+  },
+  submitScoreButtonView: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center'
   },
 })
 export default LeaguesScreen;

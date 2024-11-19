@@ -20,7 +20,7 @@ const ShoppingScreen = () => {
       <Card.Actions
       >
         <Button>
-          Add to Cart
+          Buy Now
         </Button>
       </Card.Actions>
     </Card>

@@ -21,3 +21,12 @@ Go to your frontend app's root directory and run the following command in the Te
 This will download your API's schema and by default generate client helper code into the src/graphql folder. After every API deployment, you can rerun the following command to generate updated GraphQL statement and types:
 
 `$ npx @aws-amplify/cli codegen`
+
+
+## Steps necessary after a full backend redeploy.
+### Update constants file with correct urls (in prod this should probably happen via API call -> getting the urls that is)
+
+### [InvalidIdentityPoolConfigurationException: Invalid identity pool configuration. Check assigned IAM roles for this pool.]
+
+This is likely caused by a full redploy of the backend. You wil need either need to create a new AuthenticatedRole in the BPIdentityPool or attach the existing role and update "cognito-identity.amazonaws.com:aud". There are some additional tips here to get started:
+https://stackoverflow.com/questions/44043289/aws-invalid-identity-pool-configuration-check-assigned-iam-roles-for-this-poo

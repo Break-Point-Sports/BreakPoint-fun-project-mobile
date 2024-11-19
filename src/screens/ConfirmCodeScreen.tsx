@@ -4,12 +4,13 @@ import { IconButton } from 'react-native-paper';
 import AuthButton from '../buttons/AuthButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { updateFirstName, updateLastName, updateGender, updateTennisLevel, updatePhoneNumber, updateBirthday,
+import { updateFirstName, updateLastName, updateGender, updateTennisLevel, updatePhoneNumber, updateBirthday, updateCity, updatePastLeagues, updateCurrentLeague
   } from '../redux/slices/userSlice';
 import {GET_USER_DETAILS_LAMBDA} from '../util/Constants';
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
+  const [buttonKey, setButtonKey] = useState('r');
   const [buttonActive, setButtonActive] = useState(false);
   const cognitoId = useSelector(state => state.user.cognitoId)
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const ConfirmCodeScreen = ( {navigation} ) => {
   }
 
   const updateUserInfo = async() => {
-    const URI =GET_USER_DETAILS_LAMBDA + '/?cognitoId='+ cognitoId;
+    const URI = GET_USER_DETAILS_LAMBDA + '/?cognitoId='+ cognitoId;
     console.log("Fetching " + URI);
     const response = await fetch(URI, {method: 'GET'});
     
@@ -39,6 +40,21 @@ const ConfirmCodeScreen = ( {navigation} ) => {
     dispatch(updateBirthday(body.birthday));
     dispatch(updateGender(body.gender));
     dispatch(updateTennisLevel(body.tennisLevel));
+    dispatch(updateCurrentLeague(body.currentLeague));
+    dispatch(updatePastLeagues(body.pastLeagues));
+    dispatch(updateCity(body.city));
+    dispatch(updateTennisLevel(body.tennisLevel));
+  }
+
+  const setButtonActiveFuncAndAltKey = (isActive) => {
+    if (isActive) {
+      setButtonActive(true);
+      setButtonKey('f1')
+    } else {
+      setButtonActive(false);
+      setButtonKey('f2')
+    }
+    
   }
 
   return (
@@ -56,7 +72,7 @@ const ConfirmCodeScreen = ( {navigation} ) => {
         style={styles.confirmCodeInputWrapper}
       >
         <ConfirmCodeInput 
-          setConfirmButtonActive={setButtonActive}
+          setConfirmButtonActive={setButtonActiveFuncAndAltKey}
         />
 
         { showIndicator ? 
@@ -70,6 +86,7 @@ const ConfirmCodeScreen = ( {navigation} ) => {
         :
         
           <AuthButton 
+            key={buttonKey}
             onPress={onPress}
             buttonActive={buttonActive}
             label={"Confirm"}
