@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { IconButton } from 'react-native-paper';
+
 import ConversationItem from '../random/ConversationItem';
 import { useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
@@ -7,11 +10,11 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { listRooms } from '../graphql/queries';
 
 const MessagingScreen = () => {
+  const [rooms, setRooms] = useState([]);
   const cognitoId = useSelector(state => state.user.cognitoId)
   // const matches = useSelector(state => state.matches.matches)
   const dispatch = useDispatch();
 
-  const messages = [] // temp placeholder
 
 
 
@@ -36,7 +39,8 @@ const MessagingScreen = () => {
       
       console.log("Calling client")
       const result = await client.graphql({query: listRooms})
-      console.log(result)
+      setRooms(result["data"]["listRooms"]["items"])
+      console.log(rooms)
 
     } catch (error) {
       console.log(error);
@@ -45,7 +49,11 @@ const MessagingScreen = () => {
     
   }
 
-  
+  const getRooms = () => {
+    for (const room in rooms) {
+      return <ConversationItem/>
+    }
+  }
 
   return (
     <View
@@ -58,7 +66,7 @@ const MessagingScreen = () => {
       </Text>
       
       {
-        messages.length !== 0 ? 
+        rooms.length == 0 ? 
           <Text>
             No Messages Yet.
           </Text>
@@ -67,14 +75,20 @@ const MessagingScreen = () => {
             <ScrollView
               style={styles.conversations}
             >
-              <ConversationItem />
-              <ConversationItem />
-              <ConversationItem />
-              <ConversationItem />
+              {rooms.map((room, key) => {
+                return <ConversationItem key={key}/>
+              })}
             </ScrollView>
             </>
       }
-
+      {/* <IconButton
+        icon='arrow-right'
+        color={'grey'}
+        size={40}
+        style={styles.arrowIcon}
+        disabled={imageURL !== null ? false : true}
+        onPress={() => newMessage()}
+      /> */}
     </View>
   );
 }
