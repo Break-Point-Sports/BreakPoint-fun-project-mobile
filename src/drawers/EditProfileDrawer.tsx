@@ -10,6 +10,12 @@ const EditProfileDrawer = ({ editProfileRef }) => {
 
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
+  const email = useSelector(state => state.user.email)
+  const firstName = useSelector(state => state.user.firstName)
+  const lastName = useSelector(state => state.user.lastName)
+  const birthday = useSelector(state => state.user.birthday)
+  const gender = useSelector(state => state.user.gender)
+  const tennisLevel = useSelector(state => state.user.tennisLevel);
   
   // Refs for edit profile item drawers
 
@@ -29,8 +35,9 @@ const EditProfileDrawer = ({ editProfileRef }) => {
         }
       }}
     >
-     <View
-      style={styles.drawerHeader}
+    <View style={styles.container}>
+      <View
+        style={styles.drawerHeader}
     >
       
         <IconButton
@@ -46,6 +53,7 @@ const EditProfileDrawer = ({ editProfileRef }) => {
         Edit Profile
       </Text>
     </View>
+
     <TouchableOpacity
         onPress={() => {}}
     >
@@ -54,7 +62,7 @@ const EditProfileDrawer = ({ editProfileRef }) => {
         source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${cognitoId}/profile_pic.jpg`}}
       />
     </TouchableOpacity>
-    <ScrollView>
+    <ScrollView style={styles.scrollContainer}>
 
     <Button
       style={styles.locationButton}
@@ -70,13 +78,56 @@ const EditProfileDrawer = ({ editProfileRef }) => {
     </Button>
 
     <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Email: {email}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      First Name: {firstName}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Last Name: {lastName}
+    </Button>
+    
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Birthday: {birthday}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Gender: {gender}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Tennis Level: {tennisLevel}
+    </Button>
+    </ScrollView>
+
+    <Button
       style={styles.deleteButton}
       labelStyle={styles.deleteButtonLabel}
     >
       Delete Account
-    </Button>
-    </ScrollView>
-    </RBSheet>
+      </Button>
+    </View>
+  </RBSheet>
   );
 }
 
@@ -84,6 +135,13 @@ const EditProfileDrawer = ({ editProfileRef }) => {
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  scrollContainer: {
+    flex: 1
+  },
   button: {
     borderColor: 'black',
     borderWidth: 1,
@@ -99,7 +157,6 @@ const styles = StyleSheet.create({
   deleteButton: {
     borderColor: 'black',
     borderWidth: 1,
-    marginBottom: 1,
     textAlign: 'left',
     padding: 0,
   },
