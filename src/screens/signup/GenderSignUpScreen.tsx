@@ -50,6 +50,17 @@ const GenderSignUpScreen = () => {
          Female
         </Button>
       </View>
+      <View
+        style={styles.radioButtonView}
+      >
+        <Button
+          mode={ gender === 'non-binary' ? 'contained' : 'outlined' }
+          style={styles.button}
+          onPress={() => dispatch(updateGender('non-binary'))}
+        >
+         Non-Binary
+        </Button>
+      </View>
     </View>
   )
 }

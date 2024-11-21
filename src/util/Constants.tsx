@@ -6,11 +6,13 @@ export const PROFILE_PIC_BUCKET_BASE_URL = "https://break-point-profile-pic-buck
 
 export const GRAPHQL_HTTP_ENDPOINT = "https://nfsx7yypdnhzplip346uigch4u.appsync-api.us-east-1.amazonaws.com/graphql";
 
-export const GET_USER_DETAILS_LAMBDA = 'https://kys4zh63zjhjcklicrvxclbosa0zaedi.lambda-url.us-east-1.on.aws';
+export const GET_USER_DETAILS_LAMBDA_URL = 'https://kys4zh63zjhjcklicrvxclbosa0zaedi.lambda-url.us-east-1.on.aws';
 
 export const UPDATE_PROFILE_PIC_LAMBDA_URL = "https://6ffjxxkrobd5i6gz5zeiucnuwa0wjurw.lambda-url.us-east-1.on.aws";
 
 export const CREATE_NEW_USER_LAMBDA_URL = "https://vqv4orlw6pgosg4xjrjglblgj40zwohs.lambda-url.us-east-1.on.aws"
+
+export const GET_LEAGUES_LAMBDA_URL = "https://ulxmpsba6jxabzlmtx5rwweif40ldfnz.lambda-url.us-east-1.on.aws/";
 
 export const confirmCodeScreenIdentifier: string = 'confirmCode';
 export const homeScreenIdentifier: string = 'home';

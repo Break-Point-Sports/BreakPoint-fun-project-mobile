@@ -2,25 +2,29 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { TextInput, IconButton, PaperProvider, Button, Portal, Modal } from 'react-native-paper';
-// import Slider from '@react-native-community/slider';
+import { useState, useEffect } from 'react';
+import { TextInput, IconButton, Button } from 'react-native-paper';
+import { GET_LEAGUES_LAMBDA_URL } from '../util/Constants';
 
 
 
-const NewMessageDrawer = ({ newMessageRef }) => {
-  const phoneNumber = useSelector(state => state.user.phoneNumber)
-
+const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
   const navigation = useNavigation(); 
+  useEffect(() => {
+    getFutureLeagues()
+  }, [])
 
-  const [visible, setVisible] = useState(false);
-
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const getFutureLeagues = async() => {
+    const URI = GET_LEAGUES_LAMBDA_URL + '/?isActive=future';
+    console.log("Fetching " + URI);
+    const response = await fetch(URI, {method: 'GET'});
+    const body = await response.json();
+    console.log(body);
+  }
 
   return (
     <RBSheet
-        ref={newMessageRef}
+        ref={joinFutureLeagueRef}
         closeOnPressMask={false}
         height={Dimensions.get('window').height}
         customStyles={{
@@ -32,8 +36,7 @@ const NewMessageDrawer = ({ newMessageRef }) => {
         }
     }}
   >
-    <PaperProvider>
-        <Portal>
+
             <View
                 style={styles.drawerHeader}
             >
@@ -42,60 +45,22 @@ const NewMessageDrawer = ({ newMessageRef }) => {
                   icon='close'
                   iconColor='#9C11E6'
                   size={30}
-                  onPress={() => newMessageRef.current.close()}
+                  onPress={() => joinFutureLeagueRef.current.close()}
                   style={styles.closeButton}
                 />
             </View>
-            <View
-                style={styles.mainView}
-            >
-                <TouchableOpacity
-                    onPress={() => showModal()}
-                    style={styles.toTouchableOpacity}
-                >
-                    <Text
-                        style={styles.toText}
-                    >
-                        To:
-                    </Text>
-                </TouchableOpacity>
-                <View
-                  style={styles.textInputAndButtonView}
-                >
-                  <TextInput
-                    style={styles.messagingTextInput}
-                    mode='outlined'
-                    multiline={true}
-                    autoFocus
-                  />
-                  <Button 
-                    mode="contained" 
-                    onPress={() => newMessageRef.current.open()}
-                    style={styles.sendMessageButton}
-                    labelStyle={styles.sendMessageButtonLabel}
-                  >
-                    {"Send Message"}
-                  </Button>
-                </View>
 
-            </View>
+            <Text
+                style={styles.currentLeaguesText}
+            > 
+                Join an Upcoming League
+            </Text>
+            <ScrollView
 
-            <Modal 
-                visible={visible} 
-                onDismiss={hideModal} 
-                contentContainerStyle={styles.modalContainer}
-                
             >
-                <ScrollView
-                    style={styles.modalScrollView}
-                >
-                    <Text>
-                        Alecio M.
-                    </Text>
-                </ScrollView>
-            </Modal>
-        </Portal>
-    </PaperProvider>
+
+            </ScrollView>
+
   </RBSheet>
   );
 }
@@ -112,6 +77,12 @@ const styles = StyleSheet.create({
   closeButton: {
     position: 'absolute',
     left: 5
+  },
+  currentLeaguesText: {
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 0,
+    marginBottom: 20
   },
   drawerHeader: {
     marginTop: 50,
@@ -176,4 +147,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default NewMessageDrawer;
+export default JoinFutureLeagueDrawer;

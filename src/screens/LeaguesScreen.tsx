@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRef, useState } from 'react';
 import { Button, SegmentedButtons } from 'react-native-paper';
+import JoinLeagueDrawer from '../drawers/JoinLeagueDrawer';
+import JoinFutureLeagueDrawer from '../drawers/JoinFutureLeagueDrawer';
 
 const GET_USER_TOURNAMENTS_LAMBDA_URL = ''
 
@@ -9,7 +11,8 @@ const LeaguesScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
   const currentLeague = useSelector(state => state.user.currentLeague)
   const pastLeagues = useSelector(state => state.user.pastLeagues)
-  const signUpForLeagueRef = useRef();
+  const joinLeagueDrawerRef = useRef();
+  const joinFutureLeagueRef = useRef();
   const submitScoreButton = useRef();
 
   // const tournaments = useSelector(state => state.tournaments.tournaments)
@@ -27,6 +30,10 @@ const LeaguesScreen = () => {
         value={toggleValue}
         onValueChange={setToggleValue}
         buttons={[
+          { 
+            value: 'future', 
+            label: 'Future Leagues' 
+          },
           {
             value: 'current',
             label: 'Current League',
@@ -79,14 +86,15 @@ const LeaguesScreen = () => {
               </Text>
               <Button 
                 mode="contained" 
-                onPress={() => console.log("yellooo")}
+                onPress={() => joinLeagueDrawerRef.current.open()}
                 style={styles.joinLeagueButton}
                 labelStyle={styles.joinLeagueButtonLabel}
               >
                 {"Join Now"}
               </Button>
             </View>
-          :
+        :
+          toggleValue === 'past' ?
 
             pastLeagues.length > 0 ?
               <></>
@@ -100,6 +108,25 @@ const LeaguesScreen = () => {
                 No past leagues to display
               </Text>
             </View>
+
+          :
+          <View
+          style={styles.joinLeagueView}
+        >
+          <Text
+            style={styles.notCurrentLeagueText}
+          >
+            You haven't joined any leagues.
+          </Text>
+          <Button 
+            mode="contained" 
+            onPress={() => joinFutureLeagueRef.current.open()}
+            style={styles.joinLeagueButton}
+            labelStyle={styles.joinLeagueButtonLabel}
+          >
+            {"Join Now"}
+          </Button>
+        </View>
       }
         <View
         style={styles.submitScoreButtonView}
@@ -113,7 +140,12 @@ const LeaguesScreen = () => {
             {"Submit Score"}
           </Button>
         </View>
-
+        <JoinLeagueDrawer 
+          joinLeagueRef={joinLeagueDrawerRef}
+        />
+        <JoinFutureLeagueDrawer
+          joinFutureLeagueRef={joinFutureLeagueRef}
+        />
     </View>
   );
 }

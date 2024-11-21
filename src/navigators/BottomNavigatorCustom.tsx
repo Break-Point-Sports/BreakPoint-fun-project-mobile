@@ -18,9 +18,12 @@ const BottomNavigatorCustom = ({ navigation }) => {
         navigation.navigate('leagues')
         break
       case 2:
-        navigation.navigate('messaging')
+        navigation.navigate('ladder')
         break
       case 3:
+        navigation.navigate('messaging')
+        break
+      case 4:
         navigation.navigate('shopping')
         break
     }
@@ -51,18 +54,25 @@ const BottomNavigatorCustom = ({ navigation }) => {
           onPress={() => handleClick(1)}
         />
         <IconButton
-          icon='message'
+          icon='ladder'
           iconColor={index === 2 ? '#9C11E6': 'grey'}
           size={40}
           style={styles.settingsIcon}
           onPress={() => handleClick(2)}
         />
         <IconButton
-          icon='shopping'
+          icon='message'
           iconColor={index === 3 ? '#9C11E6': 'grey'}
           size={40}
           style={styles.settingsIcon}
           onPress={() => handleClick(3)}
+        />
+        <IconButton
+          icon='shopping'
+          iconColor={index === 4 ? '#9C11E6': 'grey'}
+          size={40}
+          style={styles.settingsIcon}
+          onPress={() => handleClick(4)}
         />
       </View>
     </View>
