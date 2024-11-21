@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { updateFirstName, updateLastName, updateGender, updateTennisLevel, updatePhoneNumber, updateBirthday, updateCity, updatePastLeagues, updateCurrentLeague
   } from '../redux/slices/userSlice';
-import {GET_USER_DETAILS_LAMBDA} from '../util/Constants';
+import {GET_USER_DETAILS_LAMBDA_URL} from '../util/Constants';
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
@@ -28,7 +28,7 @@ const ConfirmCodeScreen = ( {navigation} ) => {
   }
 
   const updateUserInfo = async() => {
-    const URI = GET_USER_DETAILS_LAMBDA + '/?cognitoId='+ cognitoId;
+    const URI = GET_USER_DETAILS_LAMBDA_URL + '/?cognitoId='+ cognitoId;
     console.log("Fetching " + URI);
     const response = await fetch(URI, {method: 'GET'});
     

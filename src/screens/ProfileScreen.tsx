@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Image } from 'expo-image';
 import { signOut } from 'aws-amplify/auth';
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
+import { updateFirstName, updateLastName, updateBirthday, updateGender, updateTennisLevel, updateCurrentLeague, updatePastLeagues, updateCity, updateCognitoId, updateEmail, updatePhoneNumber } from '../redux/slices/userSlice';
 
 const ProfileScreen = ({ navigation }) => {
   const editProfileRef = useRef();
@@ -19,6 +20,18 @@ const ProfileScreen = ({ navigation }) => {
 
   const logout = async () => {
     await signOut();
+    dispatch(updateFirstName(''));
+    dispatch(updateLastName(''));
+    dispatch(updateBirthday(''));
+    dispatch(updateGender(''));
+    dispatch(updateTennisLevel(''));
+    dispatch(updateCurrentLeague('none'));
+    dispatch(updatePastLeagues([]));
+    dispatch(updateCity(''));
+    dispatch(updateTennisLevel(''));
+    dispatch(updatePhoneNumber(''))
+    dispatch(updateEmail(''))
+    dispatch(updateCognitoId(''))
     navigation.navigate('login')
   }
 
