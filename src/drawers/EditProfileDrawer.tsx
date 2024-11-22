@@ -137,7 +137,8 @@ const EditProfileDrawer = ({ editProfileRef }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingBottom: 20,
   },
   scrollContainer: {
     flex: 1
@@ -145,10 +146,11 @@ const styles = StyleSheet.create({
   button: {
     borderColor: 'black',
     borderWidth: 1,
-    marginBottom: 1,
+    marginBottom: 10,
     textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start'
+    padding: 5,
+    alignItems: 'flex-start',
+    marginHorizontal: 10,
   },
   closeButton: {
     position: 'absolute',
@@ -158,7 +160,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     textAlign: 'left',
-    padding: 0,
+    marginHorizontal: 10,
+    padding: 5,
   },
   deleteButtonLabel: {
     color: 'red'
@@ -174,10 +177,11 @@ const styles = StyleSheet.create({
   locationButton: {
     borderColor: 'black',
     borderWidth: 1,
-    marginBottom: 1,
-    marginTop: 50,
+    marginBottom: 10,
+    marginTop: 20,
     textAlign: 'left',
-    padding: 0,
+    padding: 5,
+    marginHorizontal: 10,
     alignItems: 'flex-start',
   },
   label: {
@@ -189,6 +193,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     marginTop: 10,
+    marginBottom: 10,
     backgroundColor: 'grey',
   },
   settingsText: {
