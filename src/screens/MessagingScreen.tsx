@@ -62,15 +62,21 @@ const MessagingScreen = () => {
       <View
         style={styles.root}
       > 
+            <Text
+        style={styles.yourMessagesText}
+      > 
+        Your Messages
+      </Text>
         {
-          rooms.length == 0 ? 
-          <>
+          rooms.length === 0 ? 
           <ScrollView
             style={styles.conversations}
           >
-  
+            <Text>
+              No messages. Reach out to someone to start playing!
+            </Text>
           </ScrollView>
-          </>
+
           :
             <>
               <ScrollView
@@ -137,6 +143,15 @@ const styles = StyleSheet.create({
   newMessageButtonLabel: {
     fontSize: 18,
     color: '#fff',
+  },
+  noMessagesView: {
+    height: '100%'
+  },
+  yourMessagesText: {
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 0,
+    marginBottom: 20
   },
   root: {
     display: 'flex',

@@ -10,6 +10,11 @@ const ShoppingScreen = () => {
     <View
       style={styles.root}
     > 
+                <Text
+        style={styles.swagText}
+      > 
+        Swag
+      </Text>
       <ScrollView
         style={styles.scrollView}
       >
@@ -52,6 +57,12 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     backgroundColor: 'white',
+  },
+  swagText: {
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 0,
+    marginBottom: 20
   },
 })
 export default ShoppingScreen;

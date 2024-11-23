@@ -16,7 +16,6 @@ const LeaguesScreen = () => {
   const submitScoreButton = useRef();
 
   // const tournaments = useSelector(state => state.tournaments.tournaments)
-  const dispatch = useDispatch();
   const [toggleValue, setToggleValue] = useState('current');
 
 
@@ -25,22 +24,26 @@ const LeaguesScreen = () => {
     <View
       style={styles.root}
     > 
-
+      <Text
+        style={styles.currentLeaguesText}
+      > 
+        Your Leagues
+      </Text>
       <SegmentedButtons
         value={toggleValue}
         onValueChange={setToggleValue}
         buttons={[
           { 
             value: 'future', 
-            label: 'Future Leagues' 
+            label: 'Future' 
           },
           {
             value: 'current',
-            label: 'Current League',
+            label: 'Current',
           },
           { 
             value: 'past', 
-            label: 'Past Leagues' 
+            label: 'Past' 
           },
         ]}
       />
@@ -90,7 +93,7 @@ const LeaguesScreen = () => {
                 style={styles.joinLeagueButton}
                 labelStyle={styles.joinLeagueButtonLabel}
               >
-                {"Join Now"}
+                {"View Leagues"}
               </Button>
             </View>
         :
@@ -116,7 +119,7 @@ const LeaguesScreen = () => {
           <Text
             style={styles.notCurrentLeagueText}
           >
-            You haven't joined any leagues.
+            You haven't joined any future leagues.
           </Text>
           <Button 
             mode="contained" 
@@ -124,7 +127,7 @@ const LeaguesScreen = () => {
             style={styles.joinLeagueButton}
             labelStyle={styles.joinLeagueButtonLabel}
           >
-            {"Join Now"}
+            {"View Leagues"}
           </Button>
         </View>
       }
@@ -152,6 +155,12 @@ const LeaguesScreen = () => {
 
 const styles = StyleSheet.create({
   conversations: {
+  },
+  currentLeaguesText: {
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 0,
+    marginBottom: 20
   },
   img: {
     width: 150,
