@@ -3,13 +3,15 @@ import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacit
 import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
-import { TextInput, IconButton, Button } from 'react-native-paper';
+import { TextInput, IconButton, Button, Card } from 'react-native-paper';
 import { GET_LEAGUES_LAMBDA_URL } from '../util/Constants';
 
 
 
 const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
-  const navigation = useNavigation(); 
+  const [futureLeagues, setFutureLeagues] = useState([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
   useEffect(() => {
     getFutureLeagues()
   }, [])
@@ -20,6 +22,7 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
     const response = await fetch(URI, {method: 'GET'});
     const body = await response.json();
     console.log(body);
+    setFutureLeagues(body)
   }
 
   return (
@@ -56,24 +59,87 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
                 Join an Upcoming League
             </Text>
             <ScrollView
-
             >
+              {futureLeagues.map((item,index) => (
+                <Card
+                  onPress={() => {}}
+                  style={styles.card}
+                  key={index}
+                >
 
+                <Card.Cover
+                  source={
+                    require('../../assets/denver_skyline.jpg')
+                  }
+                  style={styles.cardCover}
+                />
+                <Card.Content
+                  style={styles.cardContent}
+                >
+                <Card.Title
+                    title={item.leagueId}
+                    titleStyle={styles.cardTextTitle}
+                    style={styles.cardText}
+                  />
+                </Card.Content>
+
+              </Card>
+            ))}
             </ScrollView>
+            <View
+              style={styles.buttonView}
+            >
+              {buttonDisabled ? 
+                            <Button 
+                            mode="contained" 
+                            onPress={() => {}}
+                            style={styles.joinLeagueButtonDisabled}
+                            labelStyle={styles.joinLeagueButtonLabel}
+                            disabled={true}
+                          >
+                            {"Join Now"}
+                          </Button>
+              :
+              
+              <Button 
+              mode="contained" 
+              onPress={() => {}}
+              style={styles.joinLeagueButton}
+              labelStyle={styles.joinLeagueButtonLabel}
+            >
+              {"Join Now"}
+            </Button>
+              }
+
+            </View>
 
   </RBSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start'
+  buttonView: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center'
   },
+  cardContent: {
+    height: 0,
+    bottom: 70,
+    alignItems: 'center',
+  },
+  card: {
+    backgroundColor: 'clear',
+  },
+  cardCover: {
+    borderRadius: 0,
+  },
+  cardText: {
+    top: 8,
+  },
+  cardTextTitle: {
+    color:'white'
+  }, 
   closeButton: {
     position: 'absolute',
     left: 5
@@ -92,59 +158,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  label: {
-    color: '#9C11E6'
-  },
-  mainView: {
-    display: 'flex',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  messagingTextInput: {
-    height: 100,
-    width: '95%',
-    alignSelf: 'center',
-    marginBottom:10
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    height: 300,
-    width: 250,
-    alignSelf: 'center',
-    position: 'absolute',
-    top: 50
-  },
-  modalScrollView: {
-    height: 100,
-    width: 100
-  },
-  sendMessageButton: {
+  joinLeagueButton: {
     display: 'flex',
     width: 320,
     height: 56,
     borderRadius: 28,
     backgroundColor: '#9C11E6',
     justifyContent: 'center',
-    alignSelf: 'center'
+    marginBottom: 20
   },
-  sendMessageButtonLabel: {
+  joinLeagueButtonDisabled: {
+    display: 'flex',
+    width: 320,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(156, 17, 230, 0.25)',
+    justifyContent: 'center',
+    marginBottom: 20
+  },
+  joinLeagueButtonLabel: {
     fontSize: 18,
     color: '#fff',
   },
-  textInputAndButtonView: {
-    marginBottom: 450,
-    alignItems: 'center'
-  },
-  toText: {
-    fontSize: 30,
-    marginLeft: 20,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  toTouchableOpacity: {
-    height: 50
-  }
 })
 
 export default JoinFutureLeagueDrawer;
