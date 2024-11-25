@@ -16,7 +16,7 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
   const [fourthDigit, setFourthDigit] = useState('');
   const [fifthDigit, setFifthDigit] = useState('');
   const [sixthDigit, setSixthDigit] = useState('');
-  const [focusedElement, setFocusedElement] = useState(0);
+  const [editProp, setEditProp] = useState(true)
   const inputRef = useRef(null);
 
   const code = [
@@ -68,6 +68,15 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
     }
   };
 
+  const onBackspace = (target, e) => {
+    if (e === 'Backspace') {
+      if (target > 0) {
+        refs[target - 1].current.focus();
+      }
+      setCode[target]('');
+    } 
+  };
+
   return (
     <View
       ref={inputRef}
@@ -82,7 +91,7 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputOne}
         style={styles.codeTextInput}
         value={firstDigit}
-    
+        caretHidden={true}
       />
       <TextInput 
         keyboardType={'number-pad'}
@@ -92,6 +101,8 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputTwo}
         style={styles.codeTextInput}
         value={secondDigit}
+        onKeyPress={(e) => onBackspace(1, e.nativeEvent.key)}
+        caretHidden={true}
       />
       <TextInput 
         keyboardType={'number-pad'}
@@ -101,6 +112,8 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputThree}
         style={styles.codeTextInput}
         value={thirdDigit}
+        onKeyPress={(e) => onBackspace(2, e.nativeEvent.key)}
+        caretHidden={true}
       />
       <TextInput 
         keyboardType={'number-pad'}
@@ -110,6 +123,8 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputFour}
         style={styles.codeTextInput}
         value={fourthDigit}
+        onKeyPress={(e) => onBackspace(3, e.nativeEvent.key)}
+        caretHidden={true}
       />
       <TextInput
         keyboardType={'number-pad'}
@@ -119,6 +134,8 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputFive}
         style={styles.codeTextInput}
         value={fifthDigit}
+        onKeyPress={(e) => onBackspace(4, e.nativeEvent.key)}
+        caretHidden={true}
       />
       <TextInput 
         keyboardType={'number-pad'}
@@ -128,6 +145,8 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
         ref={refInputSix}
         style={styles.codeTextInputLast}
         value={sixthDigit}
+        onKeyPress={(e) => onBackspace(5, e.nativeEvent.key)}
+        caretHidden={true}
       />
     </View>
   );
