@@ -1,11 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useRef, useState, useEffect } from 'react';
 import { Button, SegmentedButtons } from 'react-native-paper';
 import JoinLeagueDrawer from '../drawers/JoinLeagueDrawer';
 import JoinFutureLeagueDrawer from '../drawers/JoinFutureLeagueDrawer';
-
-const GET_USER_TOURNAMENTS_LAMBDA_URL = ''
+import { GET_LEAGUE_INFO_LAMBDA_URL } from '../util/Constants';
 
 const LeaguesScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
@@ -17,8 +16,26 @@ const LeaguesScreen = () => {
 
   // const tournaments = useSelector(state => state.tournaments.tournaments)
   const [toggleValue, setToggleValue] = useState('current');
+  const [currentLeagueInfo, setCurrentLeagueInfo] = useState(null);
 
+  useEffect(() => {
+    if (currentLeague) {
+      getLeagueInfo()
+    }
+  }, [])
 
+  useEffect(() => {
+      getLeagueInfo()
+  }, [currentLeague])
+  
+  const getLeagueInfo = async() => {
+    const URI = GET_LEAGUE_INFO_LAMBDA_URL + `/?leagueId=${currentLeague}`;
+    console.log("Fetching " + URI);
+    const response = await fetch(URI, {method: 'GET'});
+    const body = await response.json();
+    console.log(body);
+    setCurrentLeagueInfo(body);
+  }
 
   return (
     <View
@@ -54,7 +71,7 @@ const LeaguesScreen = () => {
           currentLeague !== 'none' ? 
             <>
               <Text>
-                Skill Level:
+                Skill Level: {currentLeagueInfo?.tennisLevel}
               </Text>
               <Text>
                 Start Date:

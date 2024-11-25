@@ -14,7 +14,9 @@ export const CREATE_NEW_USER_LAMBDA_URL = "https://vqv4orlw6pgosg4xjrjglblgj40zw
 
 export const GET_LEAGUES_LAMBDA_URL = "https://ulxmpsba6jxabzlmtx5rwweif40ldfnz.lambda-url.us-east-1.on.aws";
 
-export const JOIN_LEAGUE_LAMBDA_URL = "https://qholotjc3vg32xq2behy7gxlsy0uyxet.lambda-url.us-east-1.on.aws"
+export const JOIN_LEAGUE_LAMBDA_URL = "https://qholotjc3vg32xq2behy7gxlsy0uyxet.lambda-url.us-east-1.on.aws";
+
+export const GET_LEAGUE_INFO_LAMBDA_URL = "https://kmya4uczpepmd4fkzzvs4or2sa0fagew.lambda-url.us-east-1.on.aws/";
 
 export const confirmCodeScreenIdentifier: string = 'confirmCode';
 export const homeScreenIdentifier: string = 'home';
