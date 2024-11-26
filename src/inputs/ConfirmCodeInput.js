@@ -58,9 +58,13 @@ const ConfirmCodeInput = ({setConfirmButtonActive}) => {
       setCode[target + i](value.charAt(i))
     }
 
+    console.log(target + value.length)
     if (target + value.length <= 5) {
       refs[target + value.length].current.focus()
-    }
+    } else if (target + value.length >= 6){
+      refs[5].current.focus();
+      setConfirmButtonActive(true)
+    };
 
     console.log(sixthDigit);
     if (target == 5){
