@@ -17,12 +17,9 @@ const MessagingScreen = () => {
   // const matches = useSelector(state => state.matches.matches)
   const dispatch = useDispatch();
 
-
-
-
   useEffect(() => {
 
-    getMessages()
+    getRooms()
 
     // console.log("Messages")
     // console.log(result)
@@ -30,7 +27,7 @@ const MessagingScreen = () => {
   }, []);
   
 
-  const getMessages = async() => {    
+  const getRooms = async() => {    
     try {
       const session = await fetchAuthSession();
 
@@ -51,12 +48,6 @@ const MessagingScreen = () => {
     
   }
 
-  const getRooms = () => {
-    for (const room in rooms) {
-      return <ConversationItem/>
-    }
-  }
-
   return (
     <>
       <View
@@ -65,7 +56,7 @@ const MessagingScreen = () => {
             <Text
         style={styles.yourMessagesText}
       > 
-        Your Messages
+        Messages
       </Text>
         {
           rooms.length === 0 ? 

@@ -13,6 +13,8 @@ export const userSlice = createSlice({
     tennisLevel: '',
     city: '',
     currentLeague: 'none',
+    currentLadder: 'none',
+    futureLeague: 'none',
     pastLeagues: []
   },
   reducers: {
@@ -46,8 +48,14 @@ export const userSlice = createSlice({
     updateCurrentLeague: (state, action) => {
       state.currentLeague = action.payload
     },
+    updateFutureLeague: (state, action) => {
+      state.futureLeague = action.payload
+    },
     updatePastLeagues: (state, action) => {
       state.pastLeagues = action.payload
+    },
+    updateCurrentLadder: (state, action) => {
+      state.currentLadder = action.payload
     }
   }
 })
@@ -55,6 +63,7 @@ export const userSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {updateCognitoId, updatePhoneNumber, updateFirstName, 
   updateLastName, updateBirthday, updateGender, updateTennisLevel, 
-  updateCity, updateCurrentLeague, updatePastLeagues, updateEmail} = userSlice.actions
+  updateCity, updateCurrentLeague, updatePastLeagues, updateEmail, 
+  updateFutureLeague, updateCurrentLadder} = userSlice.actions
 
 export default userSlice.reducer

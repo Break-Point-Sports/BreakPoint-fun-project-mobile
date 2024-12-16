@@ -18,6 +18,10 @@ export const JOIN_LEAGUE_LAMBDA_URL = "https://qholotjc3vg32xq2behy7gxlsy0uyxet.
 
 export const GET_LEAGUE_INFO_LAMBDA_URL = "https://kmya4uczpepmd4fkzzvs4or2sa0fagew.lambda-url.us-east-1.on.aws/";
 
+export const JOIN_LADDER_LAMBDA_URL = "https://ao7ivdfgvfnse4tvrv4qzlyoku0fanna.lambda-url.us-east-1.on.aws/";
+
+export const GET_LEAGUE_MEMBERS_LAMBDA_URL = "https://cblparnuo52ob5uutmon6j7tj40usefl.lambda-url.us-east-1.on.aws/"
+
 export const confirmCodeScreenIdentifier: string = 'confirmCode';
 export const homeScreenIdentifier: string = 'home';
 export const signUpNavigatorIdentifier: string = 'signup'

@@ -1,24 +1,100 @@
 import { ScrollView, StyleSheet, View, Text } from "react-native"
-import { Card, Button } from 'react-native-paper'
-import {useState} from 'react'
-
+import { Card, Button, Dialog, Portal, PaperProvider, TextInput } from 'react-native-paper'
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
+import { JOIN_LADDER_LAMBDA_URL } from '../util/Constants'
+import { updateCurrentLadder } from "../redux/slices/userSlice";
 
 const LadderScreen = () => {
+  const dispatch = useDispatch();
+  const cognitoId = useSelector(state => state.user.cognitoId)
+  const currentLadder = useSelector(state => state.user.currentLadder)
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [buttonKey, setButtonKey] = useState('d')
+  const [whichCardIsPurple, setWhichCardIsPurple] = useState(null);
+
+  const selectLadderCard = async(whichLadder) => {
+    setWhichCardIsPurple(whichLadder);
+    setButtonDisabled(false);
+    setButtonKey('nd')
+  }
+
+  const onButtonPress = async() => {
+    setShowSignUpDialog(true);
+  }
+
+  const onConfirmJoinLadder = async() => {
+    const ladderId = whichCardIsPurple;
+    console.log(`Adding ${cognitoId} to ${ladderId}`);
+    const body = JSON.stringify({
+      cognitoId: cognitoId,
+      ladderId: ladderId,
+    })
+    console.log(body);
+    
+    const response = await fetch(JOIN_LADDER_LAMBDA_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: body
+    });
+
+    if (response.status === 200) {
+      dispatch(updateCurrentLadder(ladderId))
+      setShowSignUpDialog(false);
+    }
+  }
     return (
       <View
         style={styles.rootView}
       >
-            <Text
-        style={styles.laddersText}
-      > 
-        Join a Ladder
-      </Text>
+        <PaperProvider>
+          <Portal>
+            <Dialog 
+              visible={showSignUpDialog} 
+              onDismiss={() => setShowSignUpDialog(false)}
+              dismissable={false}
+            >
+            <Dialog.Title>Confirm Purchase</Dialog.Title>
+            <Dialog.Content>
+              <Text style={styles.ladderDetailsText}
+              >
+                Ladder Details:
+              </Text>
+              <TextInput>
+              
+              </TextInput>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button 
+                onPress={() => setShowSignUpDialog(false)}
+              >
+                Cancel
+              </Button>
+            <Button 
+              onPress={() => onConfirmJoinLadder()}
+            >
+                Confirm
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+        {
+          currentLadder === 'none' ?
+          <>
+          <Text
+            style={styles.laddersText}
+          > 
+          Join a Ladder
+        </Text>
         <ScrollView
           style={styles.scrollView}
         >
           <Card
-            onPress={() => {}}
+            onPress={() => selectLadderCard('beginner')}
             style={styles.card}
           >
 
@@ -26,7 +102,8 @@ const LadderScreen = () => {
               source={
                 require('../../assets/denver_skyline.jpg')
               }
-              style={styles.cardCover}
+              style={whichCardIsPurple === 'beginner' ? styles.cardCoverChosen : styles.cardCover}
+
             />
             <Card.Content
               style={styles.cardContent}
@@ -40,7 +117,7 @@ const LadderScreen = () => {
 
           </Card>
           <Card
-            onPress={() => {}}
+            onPress={() => selectLadderCard('intermediate')}
             style={styles.card}
           >
 
@@ -48,13 +125,13 @@ const LadderScreen = () => {
               source={
                 require('../../assets/denver_skyline.jpg')
               }
-              style={styles.cardCover}
+              style={whichCardIsPurple === 'intermediate' ? styles.cardCoverChosen : styles.cardCover}
             />
             <Card.Content
               style={styles.cardContent}
             >
             <Card.Title
-                title="Intermediate Ladder"
+                title="Intermediate/Competitive Ladder"
                 titleStyle={styles.cardTextTitle}
                 style={styles.cardText}
               />
@@ -62,7 +139,8 @@ const LadderScreen = () => {
 
           </Card>
           <Card
-            onPress={() => {}}
+            onPress={() => selectLadderCard('advanced')}
+
             style={styles.card}
           >
 
@@ -70,7 +148,7 @@ const LadderScreen = () => {
               source={
                 require('../../assets/denver_skyline.jpg')
               }
-              style={styles.cardCover}
+              style={whichCardIsPurple === 'advanced' ? styles.cardCoverChosen : styles.cardCover}
             />
             <Card.Content
               style={styles.cardContent}
@@ -91,7 +169,6 @@ const LadderScreen = () => {
               
               <Button 
                 mode="contained" 
-                onPress={() => {}}
                 style={styles.joinLadderButtonDisabled}
                 labelStyle={styles.joinLadderButtonLabel}
                 disabled={true}
@@ -101,9 +178,10 @@ const LadderScreen = () => {
               :
               <Button 
               mode="contained" 
-              onPress={() => {}}
+              onPress={() => onButtonPress()}
               style={styles.joinLadderButton}
               labelStyle={styles.joinLadderButtonLabel}
+              key={buttonKey}
             >
               {"Join Now"}
             </Button>
@@ -118,6 +196,26 @@ const LadderScreen = () => {
                 {"How it works"}
               </Button>
             </View>
+            </>
+          :
+            <>
+              <Text
+                style={styles.laddersText}
+              > 
+                Ladder Play
+              </Text>
+              <Text>
+                Level:
+              </Text>
+              <Text>
+                Current Ranking:
+              </Text>
+              <Text>
+                Next Match:
+              </Text>
+            </>
+        }
+        </PaperProvider>
         </View>
     )
 }
@@ -142,6 +240,10 @@ const styles = StyleSheet.create({
   },
   cardCover: {
     borderRadius: 0,
+  },
+  cardCoverChosen: {
+    borderRadius: 0,
+    backgroundColor: '#9C11E6',
   },
   cardText: {
     top: 8,
@@ -168,6 +270,10 @@ const styles = StyleSheet.create({
   joinLadderButtonLabel: {
     fontSize: 18,
     color: '#fff',
+  },
+  ladderDetailsText: {
+    fontSize: 20,
+    marginBottom: 20
   },
   laddersText: {
     fontSize: 30,

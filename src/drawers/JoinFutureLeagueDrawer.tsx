@@ -1,16 +1,22 @@
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux'
-import { useNavigation } from '@react-navigation/native';
+import { Dimensions, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
-import { TextInput, IconButton, Button, Card } from 'react-native-paper';
-import { GET_LEAGUES_LAMBDA_URL } from '../util/Constants';
+import { useSelector, useDispatch } from 'react-redux'
+import { TextInput, IconButton, Button, Card, Dialog, Portal, PaperProvider } from 'react-native-paper';
+import { GET_LEAGUES_LAMBDA_URL, JOIN_LEAGUE_LAMBDA_URL } from '../util/Constants';
+import { updateFutureLeague } from '../redux/slices/userSlice';
 
 
 
 const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
+  const dispatch = useDispatch();
+  const cognitoId = useSelector(state => state.user.cognitoId)
+
   const [futureLeagues, setFutureLeagues] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [buttonKey, setButtonKey] = useState('d')
+  const [whichCardIsPurple, setWhichCardIsPurple] = useState(null);
 
   useEffect(() => {
     getFutureLeagues()
@@ -23,6 +29,48 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
     const body = await response.json();
     console.log(body);
     setFutureLeagues(body)
+  }
+
+  const selectLeagueCard = async(index) => {
+    setWhichCardIsPurple(index);
+    setButtonDisabled(false);
+    setButtonKey('nd')
+  }
+
+  const onButtonPress = async() => {
+    setShowSignUpDialog(true);
+  }
+
+  const onClose = () =>{
+    setButtonDisabled(true);
+    setWhichCardIsPurple(null);
+    setButtonKey('d')
+    joinFutureLeagueRef.current.close()
+  }
+
+  const onConfirmJoinFutureLeague = async() => {
+    const leagueId = futureLeagues[whichCardIsPurple].leagueId;
+    console.log(`Adding ${cognitoId} to ${leagueId}`);
+    const body = JSON.stringify({
+      cognitoId: cognitoId,
+      leagueId: leagueId,
+      currentOrFuture: 'future'
+    })
+    console.log(body);
+    
+    const response = await fetch(JOIN_LEAGUE_LAMBDA_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: body
+    });
+
+    if (response.status === 200) {
+      dispatch(updateFutureLeague(leagueId))
+      setShowSignUpDialog(false);
+      onClose()
+    }
   }
 
   return (
@@ -39,6 +87,33 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
         }
     }}
   >
+        <PaperProvider>
+      <Portal>
+        <Dialog 
+          visible={showSignUpDialog} 
+          onDismiss={() => setShowSignUpDialog(false)}
+          dismissable={false}
+        >
+          <Dialog.Title>Confirm Purchase</Dialog.Title>
+          <Dialog.Content>
+            <Text style={styles.leagueDetailsTxt}>League Details:</Text>
+            <TextInput>
+              
+            </TextInput>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button 
+              onPress={() => setShowSignUpDialog(false)}>
+                Cancel
+            </Button>
+            <Button 
+              onPress={() => onConfirmJoinFutureLeague()}>
+                Confirm
+            </Button>
+
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
             <View
                 style={styles.drawerHeader}
@@ -48,7 +123,7 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
                   icon='close'
                   iconColor='#9C11E6'
                   size={30}
-                  onPress={() => joinFutureLeagueRef.current.close()}
+                  onPress={() => onClose()}
                   style={styles.closeButton}
                 />
             </View>
@@ -62,7 +137,7 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
             >
               {futureLeagues.map((item,index) => (
                 <Card
-                  onPress={() => {}}
+                  onPress={() => selectLeagueCard(index)}
                   style={styles.card}
                   key={index}
                 >
@@ -71,7 +146,7 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
                   source={
                     require('../../assets/denver_skyline.jpg')
                   }
-                  style={styles.cardCover}
+                  style={whichCardIsPurple === index ? styles.cardCoverChosen : styles.cardCover}
                 />
                 <Card.Content
                   style={styles.cardContent}
@@ -90,29 +165,30 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
               style={styles.buttonView}
             >
               {buttonDisabled ? 
-                            <Button 
-                            mode="contained" 
-                            onPress={() => {}}
-                            style={styles.joinLeagueButtonDisabled}
-                            labelStyle={styles.joinLeagueButtonLabel}
-                            disabled={true}
-                          >
-                            {"Join Now"}
-                          </Button>
+                  <Button 
+                  mode="contained" 
+                  style={styles.joinLeagueButtonDisabled}
+                  labelStyle={styles.joinLeagueButtonLabel}
+                  disabled={true}
+                  key={buttonKey}
+                >
+                  {"Join Now"}
+                </Button>
               :
               
-              <Button 
-              mode="contained" 
-              onPress={() => {}}
-              style={styles.joinLeagueButton}
-              labelStyle={styles.joinLeagueButtonLabel}
-            >
-              {"Join Now"}
-            </Button>
+                <Button 
+                  mode="contained" 
+                  onPress={() => onButtonPress()}
+                  style={styles.joinLeagueButton}
+                  labelStyle={styles.joinLeagueButtonLabel}
+                  key={buttonKey}
+                >
+                  {"Join Now"}
+                </Button>
               }
 
             </View>
-
+            </PaperProvider>
   </RBSheet>
   );
 }
@@ -133,6 +209,10 @@ const styles = StyleSheet.create({
   },
   cardCover: {
     borderRadius: 0,
+  },
+  cardCoverChosen: {
+    borderRadius: 0,
+    backgroundColor: '#9C11E6',
   },
   cardText: {
     top: 8,
@@ -180,6 +260,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
   },
+  leagueDetailsTxt: {
+    fontSize: 20,
+    marginBottom: 20
+  }
 })
 
 export default JoinFutureLeagueDrawer;

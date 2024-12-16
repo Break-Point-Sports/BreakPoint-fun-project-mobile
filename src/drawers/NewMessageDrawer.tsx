@@ -1,22 +1,84 @@
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux'
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { TextInput, IconButton, PaperProvider, Button, Portal, Modal } from 'react-native-paper';
-// import Slider from '@react-native-community/slider';
-
+import { useState, useRef, useEffect } from 'react';
+import { TextInput, IconButton, Button } from 'react-native-paper';
+import ContactsDrawer from './ContactsDrawer';
+import { generateClient } from 'aws-amplify/data';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { createMessage, createRoom } from '../graphql/mutations'
 
 
 const NewMessageDrawer = ({ newMessageRef }) => {
-  const phoneNumber = useSelector(state => state.user.phoneNumber)
+  const cognitoId = useSelector(state => state.user.cognitoId)
+  const contactsDrawerRef = useRef();
+  const [contactToMessage, setContactToMessage] = useState({});
+  const [reloadKey, setReloadKey] = useState('a');
+  const [textInputValue, setTextInputValue] = useState("")
 
-  const navigation = useNavigation(); 
+  useEffect(() => {
+    if (contactToMessage !== null) {
+      console.log("le contact: " + contactToMessage.firstName)
+      if (reloadKey === 'a') {
+        setReloadKey('b');
+      } else {
+        setReloadKey('a')
+      }
+    }
 
-  const [visible, setVisible] = useState(false);
+  }, [contactToMessage])
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const onChangeText = (text) => {
+    setTextInputValue(text);
+  }
+
+  const sendMessage = async () => {
+    try {
+      const session = await fetchAuthSession();
+
+      const client = generateClient({
+        authMode: 'userPool',
+        authToken: session.tokens.accessToken.toString()
+      })
+
+      console.log("Calling client to create new room");
+      const createRoomResult = await client.graphql({
+        query: createRoom,
+        variables: {
+          input: {
+            name: 'hello test'
+          }
+        }
+      })
+      console.log("created new room successully")
+      const roomId = createRoomResult["data"]["createRoom"]["id"]
+      console.log(roomId)
+
+      console.log("Creating message in new room");
+
+      const createMessageResult = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            content: {
+              text: textInputValue,
+              imageId: null
+            },
+            roomId: roomId
+          }
+        }
+      })
+
+      console.log("Created new message successfully")
+      console.log(createMessageResult['data']['createMessage'])
+
+      setTextInputValue("");
+      newMessageRef.current.close()
+    } catch(error) {
+      console.log("something went wrong sending message");
+      console.log(error);
+    }
+  }
 
   return (
     <RBSheet
@@ -30,73 +92,81 @@ const NewMessageDrawer = ({ newMessageRef }) => {
         draggableIcon: {
             backgroundColor: "#000"
         }
-    }}
-  >
-    <PaperProvider>
-        <Portal>
-            <View
-                style={styles.drawerHeader}
-            >
+      }}
+    >
+      <View
+        style={styles.drawerHeader}
+      >
       
-                <IconButton
-                  icon='close'
-                  iconColor='#9C11E6'
-                  size={30}
-                  onPress={() => newMessageRef.current.close()}
-                  style={styles.closeButton}
-                />
-            </View>
-            <View
-                style={styles.mainView}
+        <IconButton
+          icon='close'
+          iconColor='#9C11E6'
+          size={30}
+          onPress={() => newMessageRef.current.close()}
+          style={styles.closeButton}
+        />
+      </View>
+      <View
+        style={styles.mainView}
+      >
+        <TouchableOpacity
+            onPress={() => contactsDrawerRef.current.open()}
+            style={styles.toTouchableOpacity}
+            key={reloadKey}
+        >
+          {contactToMessage === null?
+            <Text
+                style={styles.toText}
             >
-                <TouchableOpacity
-                    onPress={() => showModal()}
-                    style={styles.toTouchableOpacity}
-                >
-                    <Text
-                        style={styles.toText}
-                    >
-                        To:
-                    </Text>
-                </TouchableOpacity>
-                <View
-                  style={styles.textInputAndButtonView}
-                >
-                  <TextInput
-                    style={styles.messagingTextInput}
-                    mode='outlined'
-                    multiline={true}
-                    autoFocus
-                  />
-                  <Button 
-                    mode="contained" 
-                    onPress={() => newMessageRef.current.open()}
-                    style={styles.sendMessageButton}
-                    labelStyle={styles.sendMessageButtonLabel}
-                  >
-                    {"Send Message"}
-                  </Button>
-                </View>
+                To:
+            </Text>
+            :
+            <Text
+              style={styles.toText}
+             >
+              To: {contactToMessage.firstName} {contactToMessage.lastName}
+            </Text>
+          }
+        </TouchableOpacity>
+        <View
+          style={styles.textInputAndButtonView}
+        >
+          <TextInput
+            style={styles.messagingTextInput}
+            mode='outlined'
+            multiline={true}
+            value={textInputValue}
+            onChangeText={text => onChangeText(text)}
+            autoFocus
+          />
+          {textInputValue.trim() !== '' ?
+              <Button 
+                mode="contained" 
+                onPress={() => sendMessage()}
+                style={styles.sendMessageButton}
+                labelStyle={styles.sendMessageButtonLabel}
+              >
+                {"Send Message"}
+              </Button>    
+        
+            :
+              <Button 
+                mode="contained" 
+                style={styles.sendMessageButtonDisabled}
+                labelStyle={styles.sendMessageButtonLabel}
+                disabled
+              >
+            {"Send Message"}
+          </Button>
+        }
 
-            </View>
-
-            <Modal 
-                visible={visible} 
-                onDismiss={hideModal} 
-                contentContainerStyle={styles.modalContainer}
-                
-            >
-                <ScrollView
-                    style={styles.modalScrollView}
-                >
-                    <Text>
-                        Alecio M.
-                    </Text>
-                </ScrollView>
-            </Modal>
-        </Portal>
-    </PaperProvider>
-  </RBSheet>
+        </View>
+      </View>
+      <ContactsDrawer
+        contactsDrawerRef={contactsDrawerRef}
+        setContactToMessage={setContactToMessage}
+      />
+    </RBSheet>
   );
 }
 
@@ -154,6 +224,15 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: '#9C11E6',
+    justifyContent: 'center',
+    alignSelf: 'center'
+  },
+  sendMessageButtonDisabled: {
+    display: 'flex',
+    width: 320,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(156, 17, 230, 0.25)',
     justifyContent: 'center',
     alignSelf: 'center'
   },

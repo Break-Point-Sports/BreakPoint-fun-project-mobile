@@ -4,9 +4,7 @@ import { IconButton } from 'react-native-paper';
 import AuthButton from '../buttons/AuthButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { updateFirstName, updateLastName, updateGender, updateTennisLevel, updatePhoneNumber, updateBirthday, updateCity, updatePastLeagues, updateCurrentLeague
-  } from '../redux/slices/userSlice';
-import {GET_USER_DETAILS_LAMBDA_URL} from '../util/Constants';
+import { updateUserInfo } from '../util/UpdateUserInfo';
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
@@ -19,31 +17,12 @@ const ConfirmCodeScreen = ( {navigation} ) => {
     setShowIndicator(true);
     console.log('Getting user profile info for user: ' + cognitoId)
     try {
-      await updateUserInfo();
+      await updateUserInfo(cognitoId, dispatch);
       navigation.navigate('home');
     } catch(error) {
       console.log(error)
       navigation.navigate('signup')
     }
-  }
-
-  const updateUserInfo = async() => {
-    const URI = GET_USER_DETAILS_LAMBDA_URL + '/?cognitoId='+ cognitoId;
-    console.log("Fetching " + URI);
-    const response = await fetch(URI, {method: 'GET'});
-    
-    const body = await response.json();
-    console.log(body);
-
-    dispatch(updateFirstName(body.firstName));
-    dispatch(updateLastName(body.lastName));
-    dispatch(updateBirthday(body.birthday));
-    dispatch(updateGender(body.gender));
-    dispatch(updateTennisLevel(body.tennisLevel));
-    dispatch(updateCurrentLeague(body.currentLeague));
-    dispatch(updatePastLeagues(body.pastLeagues));
-    dispatch(updateCity(body.city));
-    dispatch(updateTennisLevel(body.tennisLevel));
   }
 
   const setButtonActiveFuncAndAltKey = (isActive) => {

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { updatePhoneNumber } from '../redux/slices/userSlice';
 import { updateCognitoId } from '../redux/slices/userSlice'
 import { confirmCodeScreenIdentifier, homeScreenIdentifier, signUpNavigatorIdentifier } from '../util/Constants';
+import { updateUserInfo } from '../util/UpdateUserInfo';
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -58,6 +59,7 @@ const LoginScreen = ({ navigation }) => {
         const { userId } = await getCurrentUser();
         dispatch(updateCognitoId(userId));
         dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
+        await updateUserInfo(userId, dispatch);
         navigation.navigate(homeScreenIdentifier);
       }
       

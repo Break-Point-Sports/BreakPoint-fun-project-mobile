@@ -9,32 +9,52 @@ import { GET_LEAGUE_INFO_LAMBDA_URL } from '../util/Constants';
 const LeaguesScreen = () => {
   const cognitoId = useSelector(state => state.user.cognitoId)
   const currentLeague = useSelector(state => state.user.currentLeague)
+  const futureLeague = useSelector(state => state.user.futureLeague)
   const pastLeagues = useSelector(state => state.user.pastLeagues)
   const joinLeagueDrawerRef = useRef();
   const joinFutureLeagueRef = useRef();
   const submitScoreButton = useRef();
 
-  // const tournaments = useSelector(state => state.tournaments.tournaments)
   const [toggleValue, setToggleValue] = useState('current');
   const [currentLeagueInfo, setCurrentLeagueInfo] = useState(null);
+  const [futureLeagueInfo, setFutureLeagueInfo] = useState(null);
+
 
   useEffect(() => {
     if (currentLeague) {
-      getLeagueInfo()
+      getCurrentLeagueInfo()
+    } 
+
+    if (futureLeague) {
+      getFutureLeagueInfo()
     }
   }, [])
 
   useEffect(() => {
-      getLeagueInfo()
+    getCurrentLeagueInfo()
   }, [currentLeague])
   
-  const getLeagueInfo = async() => {
-    const URI = GET_LEAGUE_INFO_LAMBDA_URL + `/?leagueId=${currentLeague}`;
+  useEffect(() => {
+    getFutureLeagueInfo()
+  }, [futureLeague])
+
+  const getCurrentLeagueInfo = async() => {
+    const body = getLeagueInfo(currentLeague);
+    setCurrentLeagueInfo(body);
+  }
+
+  const getFutureLeagueInfo = async() => {
+    const body = getLeagueInfo(futureLeague);
+    setCurrentLeagueInfo(body);
+  }
+
+  const getLeagueInfo = async (leagueId) => {
+    const URI = GET_LEAGUE_INFO_LAMBDA_URL + `?leagueId=${leagueId}`;
     console.log("Fetching " + URI);
     const response = await fetch(URI, {method: 'GET'});
     const body = await response.json();
     console.log(body);
-    setCurrentLeagueInfo(body);
+    return body;
   }
 
   return (
@@ -44,7 +64,7 @@ const LeaguesScreen = () => {
       <Text
         style={styles.currentLeaguesText}
       > 
-        Your Leagues
+        League Play
       </Text>
       <SegmentedButtons
         value={toggleValue}
@@ -91,11 +111,20 @@ const LeaguesScreen = () => {
               <ScrollView>
                 
               </ScrollView>
+              <View
+                style={styles.submitScoreButtonView}
+              >
+                <Button 
+                  mode="contained" 
+                  onPress={() => console.log(currentLeague)}
+                  style={styles.submitScoreButton}
+                  labelStyle={styles.submitScoreButtonLabel}
+                >
+                  {"Submit Score"}
+                </Button>
+              </View>
             </>
-
           :
-
-
             <View
               style={styles.joinLeagueView}
             >
@@ -130,36 +159,50 @@ const LeaguesScreen = () => {
             </View>
 
           :
-          <View
-          style={styles.joinLeagueView}
-        >
-          <Text
-            style={styles.notCurrentLeagueText}
-          >
-            You haven't joined any future leagues.
-          </Text>
-          <Button 
-            mode="contained" 
-            onPress={() => joinFutureLeagueRef.current.open()}
-            style={styles.joinLeagueButton}
-            labelStyle={styles.joinLeagueButtonLabel}
-          >
-            {"View Leagues"}
-          </Button>
-        </View>
+            futureLeague === 'none' ?
+              <View
+                style={styles.joinLeagueView}
+              >
+                <Text
+                  style={styles.notCurrentLeagueText}
+                >
+                  You haven't joined any future leagues.
+                </Text>
+                <Button 
+                  mode="contained" 
+                  onPress={() => joinFutureLeagueRef.current.open()}
+                  style={styles.joinLeagueButton}
+                  labelStyle={styles.joinLeagueButtonLabel}
+                >
+                  {"View Leagues"}
+                </Button>
+              </View>
+            :
+            <>
+              <Text>
+                Skill Level: {futureLeagueInfo?.tennisLevel}
+              </Text>
+              <Text>
+                Start Date:
+              </Text>
+              <Text>
+                End Date:
+              </Text>
+              <Text>
+                Playoff Start Date:
+              </Text>
+              <Text>
+                Minimum wins to qualify for playoffs:
+              </Text>
+              <Text>
+                Players:
+              </Text>
+              <ScrollView>
+                
+              </ScrollView>
+            </>
+
       }
-        <View
-        style={styles.submitScoreButtonView}
-        >
-        <Button 
-            mode="contained" 
-            onPress={() => console.log(currentLeague)}
-            style={styles.submitScoreButton}
-            labelStyle={styles.submitScoreButtonLabel}
-          >
-            {"Submit Score"}
-          </Button>
-        </View>
         <JoinLeagueDrawer 
           joinLeagueRef={joinLeagueDrawerRef}
         />
@@ -205,7 +248,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
   },
-
   notCurrentLeagueText: {
     fontSize: 30,
     textAlign: 'center',
