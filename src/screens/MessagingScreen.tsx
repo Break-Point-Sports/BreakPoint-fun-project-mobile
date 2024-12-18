@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useState, useRef } from 'react';
 import { Button } from 'react-native-paper';
 import { useEffect } from 'react';
@@ -11,20 +11,16 @@ import NewMessageDrawer from '../drawers/NewMessageDrawer';
 import ConversationItem from '../random/ConversationItem';
 
 const MessagingScreen = () => {
+  const cognitoId = useSelector(state => state.user.cognitoId)
+  
   const [rooms, setRooms] = useState([]);
   const newMessageRef = useRef();
-  const cognitoId = useSelector(state => state.user.cognitoId)
-  // const matches = useSelector(state => state.matches.matches)
-  const dispatch = useDispatch();
+  const [updateRoomsToggle, setUpdateRoomsToggle] = useState('a');
+
 
   useEffect(() => {
-
     getRooms()
-
-    // console.log("Messages")
-    // console.log(result)
-
-  }, []);
+  }, [updateRoomsToggle]);
   
 
   const getRooms = async() => {    
@@ -36,8 +32,13 @@ const MessagingScreen = () => {
         authToken: session.tokens.accessToken.toString()
       });
       
-      console.log("Calling client")
-      const result = await client.graphql({query: listRooms})
+      console.log(`Calling list rooms client for owner ${cognitoId}`)
+      const result = await client.graphql({
+        query: listRooms,
+        variables: {
+          ownerId: cognitoId
+        }
+      })
       setRooms(result["data"]["listRooms"]["items"])
       console.log(rooms)
 
@@ -74,7 +75,7 @@ const MessagingScreen = () => {
                 style={styles.conversations}
               >
                 {rooms.map((room, key) => {
-                  return <ConversationItem key={key}/>
+                  return <ConversationItem key={key} chatPartnerId={room.chatPartnerId}/>
                 })}
               </ScrollView>
               </>
@@ -94,6 +95,8 @@ const MessagingScreen = () => {
       </View>
       <NewMessageDrawer
         newMessageRef={newMessageRef}
+        messageScreenUpdateRoomsToggle={updateRoomsToggle}
+        messageScreenSetUpdateRoomsToggle={setUpdateRoomsToggle}
       />
     </>
   );

@@ -9,10 +9,13 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { createMessage, createRoom } from '../graphql/mutations'
 
 
-const NewMessageDrawer = ({ newMessageRef }) => {
+const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messageScreenSetUpdateRoomsToggle}) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
+  const firstName = useSelector(state => state.user.firstName)
+  const lastName = useSelector(state => state.user.lastName)
+
   const contactsDrawerRef = useRef();
-  const [contactToMessage, setContactToMessage] = useState({});
+  const [contactToMessage, setContactToMessage] = useState(null);
   const [reloadKey, setReloadKey] = useState('a');
   const [textInputValue, setTextInputValue] = useState("")
 
@@ -41,18 +44,36 @@ const NewMessageDrawer = ({ newMessageRef }) => {
         authToken: session.tokens.accessToken.toString()
       })
 
-      console.log("Calling client to create new room");
-      const createRoomResult = await client.graphql({
+      console.log("Calling client to create new room for sender");
+      const createRoomResult1 = await client.graphql({
         query: createRoom,
         variables: {
           input: {
-            name: 'hello test'
+            name: `${contactToMessage.firstName} ${contactToMessage.lastName}`,
+            chatPartnerId: contactToMessage.cognitoId,
+            ownerId: cognitoId
           }
         }
       })
-      console.log("created new room successully")
-      const roomId = createRoomResult["data"]["createRoom"]["id"]
-      console.log(roomId)
+      console.log("created new room for sender successully")
+      const roomId1 = createRoomResult1["data"]["createRoom"]["id"]
+      console.log("roomId sender: " + roomId1)
+
+      console.log("Calling client to create new room for recepient");
+      const createRoomResult2 = await client.graphql({
+        query: createRoom,
+        variables: {
+          input: {
+            name: `${firstName} ${lastName}`,
+            chatPartnerId: cognitoId,
+            ownerId: contactToMessage.cognitoId
+          }
+        }
+      })
+      console.log("created new room fpr recepient successully")
+      const roomId2 = createRoomResult2["data"]["createRoom"]["id"]
+      console.log("roomId recepient:" + roomId2)
+
 
       console.log("Creating message in new room");
 
@@ -62,7 +83,6 @@ const NewMessageDrawer = ({ newMessageRef }) => {
           input: {
             content: {
               text: textInputValue,
-              imageId: null
             },
             roomId: roomId
           }
@@ -73,6 +93,11 @@ const NewMessageDrawer = ({ newMessageRef }) => {
       console.log(createMessageResult['data']['createMessage'])
 
       setTextInputValue("");
+      if (messageScreenUpdateRoomsToggle === 'a') {
+        messageScreenSetUpdateRoomsToggle('b')
+      } else {
+        messageScreenSetUpdateRoomsToggle('a');
+      }
       newMessageRef.current.close()
     } catch(error) {
       console.log("something went wrong sending message");

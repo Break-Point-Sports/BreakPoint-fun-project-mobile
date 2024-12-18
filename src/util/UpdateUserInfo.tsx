@@ -6,7 +6,7 @@ import { updateFirstName, updateLastName, updateGender, updateTennisLevel,
 import {GET_USER_DETAILS_LAMBDA_URL} from '../util/Constants';
 
 export const updateUserInfo = async(cognitoId, dispatch) => {
-  const URI = GET_USER_DETAILS_LAMBDA_URL + '/?cognitoId='+ cognitoId;
+  const URI = GET_USER_DETAILS_LAMBDA_URL + '?cognitoId='+ cognitoId;
   console.log("Fetching " + URI);
   const response = await fetch(URI, {method: 'GET'});
   

@@ -4,9 +4,9 @@ export const IDENTITY_POOL_ID = "us-east-1:db7f2354-4854-405d-af26-686f7871bb92"
 
 export const PROFILE_PIC_BUCKET_BASE_URL = "https://break-point-profile-pic-bucket.s3.us-east-1.amazonaws.com";
 
-export const GRAPHQL_HTTP_ENDPOINT = "https://nfsx7yypdnhzplip346uigch4u.appsync-api.us-east-1.amazonaws.com/graphql";
+export const GRAPHQL_HTTP_ENDPOINT = "https://yylixsueavcinm7pzuy62xcfne.appsync-api.us-east-1.amazonaws.com/graphql";
 
-export const GET_USER_DETAILS_LAMBDA_URL = 'https://kys4zh63zjhjcklicrvxclbosa0zaedi.lambda-url.us-east-1.on.aws';
+export const GET_USER_DETAILS_LAMBDA_URL = 'https://kys4zh63zjhjcklicrvxclbosa0zaedi.lambda-url.us-east-1.on.aws/';
 
 export const UPDATE_PROFILE_PIC_LAMBDA_URL = "https://6ffjxxkrobd5i6gz5zeiucnuwa0wjurw.lambda-url.us-east-1.on.aws";
 
