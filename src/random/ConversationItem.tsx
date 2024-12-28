@@ -11,7 +11,7 @@ import MessagingDrawer from '../drawers/MessagingDrawer'
 
 import { GET_USER_DETAILS_LAMBDA_URL, PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
-const ConversationItem = ({chatPartnerId, roomId}) => {
+const ConversationItem = ({chatPartnerId, roomId, chatPartnerRoomId}) => {
   const messagingDrawerRef = useRef();
 
   const [chatPartnerDetails, setChatPartnerDetails] = useState(null);
@@ -70,6 +70,7 @@ const ConversationItem = ({chatPartnerId, roomId}) => {
         messagingDrawerRef = {messagingDrawerRef}
         chatPartnerDetails={chatPartnerDetails}
         roomId={roomId}
+        chatPartnerRoomId={chatPartnerRoomId}
       />
     </View>
   );

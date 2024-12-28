@@ -13,13 +13,14 @@ import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 import { useState, useEffect } from 'react';
 import SentMessageItem from '../random/SentMessageItem';
 import { Observable } from '@reduxjs/toolkit';
+import ReceivedMessageItem from '../random/ReceivedMessageItem';
 
-const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId}) => {
+const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPartnerRoomId}) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
 
   
   const [textInputValue, setTextInputValue] = useState('');
-  const [messages, setMessages] = useState()
+  const [messages, setMessages] = useState([])
 
   useEffect(() => {
     getMessages()
@@ -43,14 +44,10 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId}) => {
         roomId: roomId
       }
     }) as unknown as Observable<any>).subscribe({
-      next: ({value}) => {
-        console.log("Message subscription value:")
-        console.log(value)
-      }// ,
-      // error: (error) => {
-      //   console.log("SUBSCRIPTION ERRRORR ABORT ABORT");
-      //   console.log(error);
-      // } 
+      next: async ({value}) => {
+        console.log("Message subscription action!")
+        await getMessages()
+      }
     })
   }
 
@@ -77,74 +74,61 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId}) => {
       console.log(error);
     }
   }
-
-  const displayMessages = () => {
-    if (messages) {
-      for (const message of messages) {
-        if (message.senderId === cognitoId) {
-          return <SentMessageItem message={message}/>
-        }
-      }
-    }
-
-  }
   
   const onChangeText = (text) => {
     setTextInputValue(text)
   }
 
-    const sendMessage = async () => {
-      try {
-        const session = await fetchAuthSession();
-  
-        const client = generateClient({
-          authMode: 'userPool',
-          authToken: session.tokens.accessToken.toString()
-        })
+  const sendMessage = async () => {
+    console.log(`roomId: ${roomId}`)
+    console.log(`chatPartnerRoomID: ${chatPartnerRoomId}`)
 
-        console.log("Creating message in room 1 (for sender)");
-  
-        const createMessageResult1 = await client.graphql({
-          query: createMessage,
-          variables: {
-            input: {
-              roomId: roomId1,
-              senderId: cognitoId,
-              recipientId: contactToMessage.cognitoId,
-              content:textInputValue,
-            }
+    try {
+      const session = await fetchAuthSession();
+
+      const client = generateClient({
+        authMode: 'userPool',
+        authToken: session.tokens.accessToken.toString()
+      })
+
+      console.log("Creating message in room 1 (for sender)");
+
+      const createMessageResult1 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: roomId,
+            senderId: cognitoId,
+            recipientId: chatPartnerDetails.cognitoId,
+            content:textInputValue,
           }
-        })
-  
-        console.log("Creating message in room 2 (for recipient)");
-  
-        const createMessageResult2 = await client.graphql({
-          query: createMessage,
-          variables: {
-            input: {
-              roomId: roomId2,
-              senderId: contactToMessage.cognitoId,
-              recipientId: cognitoId,
-              content: textInputValue,
-            }
+        }
+      })
+
+      console.log("Creating message in room 2 (for recipient)");
+
+      const createMessageResult2 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: chatPartnerRoomId,
+            senderId: cognitoId,
+            recipientId: chatPartnerDetails.cognitoId,
+            content: textInputValue,
           }
-        })
-  
-        console.log("Created new messages successfully")
-        console.log(createMessageResult2['data']['createMessage'])
-  
-        setTextInputValue("");
-        // if (messageScreenUpdateRoomsToggle === 'a') {
-        //   messageScreenSetUpdateRoomsToggle('b')
-        // } else {
-        //   messageScreenSetUpdateRoomsToggle('a');
-        // }
-        // newMessageRef.current.close()
-      } catch(error) {
-        console.log("something went wrong sending message");
-        console.log(error);
-      }
+        }
+      })
+
+      console.log("Created new messages successfully")
+      console.log(createMessageResult2['data']['createMessage'])
+
+      setTextInputValue("");
+      await getMessages()
+    } catch(error) {
+      console.log("something went wrong sending message");
+      console.log(error);
     }
+  }
 
   return (
     <RBSheet
@@ -185,7 +169,13 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId}) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView>
-          {displayMessages()}
+          {messages.map((message, key) => {
+            if (message.senderId === cognitoId) {
+              return <SentMessageItem message={message} key={key}/>
+            } else {
+              return <ReceivedMessageItem message={message} key={key}/>
+            }
+          })}
         </ScrollView>
         <View
           style={commonStyles.textInputWrapper}
@@ -204,7 +194,7 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId}) => {
                 icon='arrow-up'
                 iconColor='#9C11E6'
                 size={40}
-                onPress={() => messagingDrawerRef.current.close()}
+                onPress={() => sendMessage()}
                 style={commonStyles.sendTextButton}
               />
             :

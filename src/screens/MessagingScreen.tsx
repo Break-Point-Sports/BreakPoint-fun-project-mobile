@@ -74,7 +74,7 @@ const MessagingScreen = () => {
                 style={styles.conversations}
               >
                 {rooms.map((room, key) => {
-                  return <ConversationItem key={key} roomId={room.id} chatPartnerId={room.chatPartnerId}/>
+                  return <ConversationItem key={key} roomId={room.id} chatPartnerRoomId={room.chatPartnerRoomId} chatPartnerId={room.chatPartnerId} />
                 })}
               </ScrollView>
               </>

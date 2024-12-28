@@ -5,22 +5,22 @@ import { useSelector } from 'react-redux'
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
 
-const SentMessageItem = ({message}) => {
-  const cognitoId = useSelector(state => state.user.cognitoId)
+const ReceivedMessageItem = ({message}) => {
   return (
     <View>
         <View
           style={styles.messageWrapper}
         >
+          <Image
+            source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${message?.senderId}/profile_pic.jpg`}}
+            style={styles.imageProfileConversation}
+          />
           <View
             style={styles.sentMessage}
           >
             <Text> {message?.content} </Text>
           </View>
-          <Image
-            source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${cognitoId}/profile_pic.jpg`}}
-            style={styles.imageProfileConversation}
-          />
+
       </View>
 
     </View>
@@ -38,23 +38,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
   },
   messageWrapper: {
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row'
   },
   sentMessage: {
     width: '40%',
-    backgroundColor: 'rgba(156, 17, 230, 0.75)',
+    backgroundColor: 'rgba(156, 17, 230, 0.25)',
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 20,
-    marginTop: 5
   }
 
 })
 
 
-export default SentMessageItem;
+export default ReceivedMessageItem;
 

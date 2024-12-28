@@ -92,36 +92,36 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
 
       console.log("Result: ")
       console.log(updateRoom1WithChatPartnerRoomId2Result)
-      // console.log("Creating message in room 1 (for sender)");
+      console.log("Creating message in room 1 (for sender)");
 
-      // const createMessageResult1 = await client.graphql({
-      //   query: createMessage,
-      //   variables: {
-      //     input: {
-      //       roomId: roomId1,
-      //       senderId: cognitoId,
-      //       recipientId: contactToMessage.cognitoId,
-      //       content:textInputValue,
-      //     }
-      //   }
-      // })
+      const createMessageResult1 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: roomId1,
+            senderId: cognitoId,
+            recipientId: contactToMessage.cognitoId,
+            content:textInputValue,
+          }
+        }
+      })
 
-      // console.log("Creating message in room 2 (for recipient)");
+      console.log("Creating message in room 2 (for recipient)");
 
-      // const createMessageResult2 = await client.graphql({
-      //   query: createMessage,
-      //   variables: {
-      //     input: {
-      //       roomId: roomId2,
-      //       senderId: contactToMessage.cognitoId,
-      //       recipientId: cognitoId,
-      //       content: textInputValue,
-      //     }
-      //   }
-      // })
+      const createMessageResult2 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: roomId2,
+            senderId: cognitoId,
+            recipientId: contactToMessage.cognitoId,
+            content: textInputValue,
+          }
+        }
+      })
 
-      // console.log("Created new messages successfully")
-      // console.log(createMessageResult2['data']['createMessage'])
+      console.log("Created new messages successfully")
+      console.log(createMessageResult2['data']['createMessage'])
 
       setTextInputValue("");
       if (messageScreenUpdateRoomsToggle === 'a') {
