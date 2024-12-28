@@ -72,12 +72,12 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage }) => {
         <IconButton
           icon='close'
           iconColor='#9C11E6'
-          size={30}
+          size={40}
           onPress={() => contactsDrawerRef.current.close()}
           style={styles.closeButton}
         />
       </View>
-      <Text
+      <Text 
         style={styles.breakPointContactsText}
       > 
         BreakPoint Contacts

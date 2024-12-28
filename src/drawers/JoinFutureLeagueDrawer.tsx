@@ -122,7 +122,7 @@ const JoinFutureLeagueDrawer = ({ joinFutureLeagueRef }) => {
                 <IconButton
                   icon='close'
                   iconColor='#9C11E6'
-                  size={30}
+                  size={40}
                   onPress={() => onClose()}
                   style={styles.closeButton}
                 />

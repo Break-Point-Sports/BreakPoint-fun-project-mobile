@@ -1,13 +1,14 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateRoom = /* GraphQL */ `
-  subscription OnCreateRoom {
-    onCreateRoom {
+export const onCreateRoomByOwnerId = /* GraphQL */ `
+  subscription OnCreateRoomByOwnerId($ownerId: String!) {
+    onCreateRoomByOwnerId(ownerId: $ownerId) {
       id
       createdAt
       name
       chatPartnerId
+      chatPartnerRoomId
       ownerId
       messages {
         items {

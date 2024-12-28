@@ -1,12 +1,16 @@
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { useSelector } from 'react-redux'
 import { useState, useRef, useEffect } from 'react';
-import { TextInput, IconButton, Button } from 'react-native-paper';
-import ContactsDrawer from './ContactsDrawer';
+import { IconButton, Button } from 'react-native-paper';
 import { generateClient } from 'aws-amplify/data';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { createMessage, createRoom } from '../graphql/mutations'
+
+import { createMessage, createRoom, updateChatPartnerRoomId } from '../graphql/mutations'
+import ContactsDrawer from './ContactsDrawer';
+import commonStyles from '../util/CommonStyles';
+import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
+
 
 
 const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messageScreenSetUpdateRoomsToggle}) => {
@@ -66,31 +70,58 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
           input: {
             name: `${firstName} ${lastName}`,
             chatPartnerId: cognitoId,
-            ownerId: contactToMessage.cognitoId
+            chatPartnerRoomId: roomId1,
+            ownerId: contactToMessage.cognitoId,
           }
         }
       })
-      console.log("created new room fpr recepient successully")
+      console.log("created new room for recepient successully")
       const roomId2 = createRoomResult2["data"]["createRoom"]["id"]
-      console.log("roomId recepient:" + roomId2)
+      console.log("roomId recepient: " + roomId2)
 
-
-      console.log("Creating message in new room");
-
-      const createMessageResult = await client.graphql({
-        query: createMessage,
+      console.log(`Updating room1 chatPartnerRoomId with roomId2: ${roomId2}`)
+      const updateRoom1WithChatPartnerRoomId2Result = await client.graphql({
+        query: updateChatPartnerRoomId,
         variables: {
           input: {
-            content: {
-              text: textInputValue,
-            },
-            roomId: roomId
+            roomId: roomId1,
+            chatPartnerRoomId: roomId2
           }
         }
       })
 
-      console.log("Created new message successfully")
-      console.log(createMessageResult['data']['createMessage'])
+      console.log("Result: ")
+      console.log(updateRoom1WithChatPartnerRoomId2Result)
+      // console.log("Creating message in room 1 (for sender)");
+
+      // const createMessageResult1 = await client.graphql({
+      //   query: createMessage,
+      //   variables: {
+      //     input: {
+      //       roomId: roomId1,
+      //       senderId: cognitoId,
+      //       recipientId: contactToMessage.cognitoId,
+      //       content:textInputValue,
+      //     }
+      //   }
+      // })
+
+      // console.log("Creating message in room 2 (for recipient)");
+
+      // const createMessageResult2 = await client.graphql({
+      //   query: createMessage,
+      //   variables: {
+      //     input: {
+      //       roomId: roomId2,
+      //       senderId: contactToMessage.cognitoId,
+      //       recipientId: cognitoId,
+      //       content: textInputValue,
+      //     }
+      //   }
+      // })
+
+      // console.log("Created new messages successfully")
+      // console.log(createMessageResult2['data']['createMessage'])
 
       setTextInputValue("");
       if (messageScreenUpdateRoomsToggle === 'a') {
@@ -103,6 +134,11 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
       console.log("something went wrong sending message");
       console.log(error);
     }
+  }
+
+  const onClose = () => {
+    setContactToMessage(null);
+    newMessageRef.current.close()
   }
 
   return (
@@ -120,25 +156,22 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
       }}
     >
       <View
-        style={styles.drawerHeader}
+        style={commonStyles.drawerHeader}
       >
       
         <IconButton
           icon='close'
           iconColor='#9C11E6'
-          size={30}
-          onPress={() => newMessageRef.current.close()}
-          style={styles.closeButton}
+          size={40}
+          onPress={() => onClose()}
+          style={commonStyles.closeButton}
         />
       </View>
-      <View
-        style={styles.mainView}
+      <TouchableOpacity
+        onPress={() => contactsDrawerRef.current.open()}
+        style={styles.toTouchableOpacity}
+        key={reloadKey}
       >
-        <TouchableOpacity
-            onPress={() => contactsDrawerRef.current.open()}
-            style={styles.toTouchableOpacity}
-            key={reloadKey}
-        >
           {contactToMessage === null?
             <Text
                 style={styles.toText}
@@ -152,41 +185,56 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
               To: {contactToMessage.firstName} {contactToMessage.lastName}
             </Text>
           }
-        </TouchableOpacity>
+      </TouchableOpacity>
+          
+      {contactToMessage === null ?
+          <></>
+        :
+          <TouchableOpacity
+            onPress={() => contactsDrawerRef.current.open()}
+          >
+            <Image
+              style={commonStyles.profileImg}
+              source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${contactToMessage?.cognitoId}/profile_pic.jpg`}}
+            />
+          </TouchableOpacity>
+      }
+      
+      <KeyboardAvoidingView
+        style={commonStyles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View
-          style={styles.textInputAndButtonView}
+          style={commonStyles.textInputWrapper}
         >
           <TextInput
-            style={styles.messagingTextInput}
-            mode='outlined'
+            style={commonStyles.textInput}
             multiline={true}
             value={textInputValue}
             onChangeText={text => onChangeText(text)}
+            defaultValue='Message'
             autoFocus
           />
-          {textInputValue.trim() !== '' ?
-              <Button 
-                mode="contained" 
+          {
+            textInputValue.trim() !== '' ?
+              <IconButton
+                icon='arrow-up'
+                iconColor='#9C11E6'
+                size={40}
                 onPress={() => sendMessage()}
-                style={styles.sendMessageButton}
-                labelStyle={styles.sendMessageButtonLabel}
-              >
-                {"Send Message"}
-              </Button>    
-        
+                style={commonStyles.sendTextButton}
+              />
             :
-              <Button 
-                mode="contained" 
-                style={styles.sendMessageButtonDisabled}
-                labelStyle={styles.sendMessageButtonLabel}
+              <IconButton
+                icon='arrow-up'
+                iconColor='rgba(156, 17, 230, 0.25)'
+                size={40}
                 disabled
-              >
-            {"Send Message"}
-          </Button>
-        }
-
+                style={commonStyles.sendTextButton}
+              />
+          }
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <ContactsDrawer
         contactsDrawerRef={contactsDrawerRef}
         setContactToMessage={setContactToMessage}
@@ -196,79 +244,6 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
 }
 
 const styles = StyleSheet.create({
-  button: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start'
-  },
-  closeButton: {
-    position: 'absolute',
-    left: 5
-  },
-  drawerHeader: {
-    marginTop: 50,
-    marginBottom: 15,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  label: {
-    color: '#9C11E6'
-  },
-  mainView: {
-    display: 'flex',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  messagingTextInput: {
-    height: 100,
-    width: '95%',
-    alignSelf: 'center',
-    marginBottom:10
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    height: 300,
-    width: 250,
-    alignSelf: 'center',
-    position: 'absolute',
-    top: 50
-  },
-  modalScrollView: {
-    height: 100,
-    width: 100
-  },
-  sendMessageButton: {
-    display: 'flex',
-    width: 320,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#9C11E6',
-    justifyContent: 'center',
-    alignSelf: 'center'
-  },
-  sendMessageButtonDisabled: {
-    display: 'flex',
-    width: 320,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(156, 17, 230, 0.25)',
-    justifyContent: 'center',
-    alignSelf: 'center'
-  },
-  sendMessageButtonLabel: {
-    fontSize: 18,
-    color: '#fff',
-  },
-  textInputAndButtonView: {
-    marginBottom: 450,
-    alignItems: 'center'
-  },
   toText: {
     fontSize: 30,
     marginLeft: 20,
@@ -276,7 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   toTouchableOpacity: {
-    height: 50
+    height: 50,
   }
 })
 

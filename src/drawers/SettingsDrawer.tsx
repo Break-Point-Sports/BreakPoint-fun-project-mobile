@@ -34,7 +34,7 @@ const SettingsDrawer = ({ settingsRef }) => {
         <IconButton
           icon='close'
           color='#9C11E6'
-          size={30}
+          size={40}
           onPress={() => settingsRef.current.close()}
           style={styles.closeButton}
         />

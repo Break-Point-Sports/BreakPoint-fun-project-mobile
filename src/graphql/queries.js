@@ -9,6 +9,7 @@ export const listRooms = /* GraphQL */ `
         createdAt
         name
         chatPartnerId
+        chatPartnerRoomId
         ownerId
         messages {
           items {

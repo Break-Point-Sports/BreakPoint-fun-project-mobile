@@ -21,6 +21,33 @@ export const createRoom = /* GraphQL */ `
       createdAt
       name
       chatPartnerId
+      chatPartnerRoomId
+      ownerId
+      messages {
+        items {
+          id
+          createdAt
+          roomId
+          senderId
+          recipientId
+          content
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      __typename
+    }
+  }
+`;
+export const updateChatPartnerRoomId = /* GraphQL */ `
+  mutation UpdateChatPartnerRoomId($input: ChatPartnerRoomIdInput!) {
+    updateChatPartnerRoomId(input: $input) {
+      id
+      createdAt
+      name
+      chatPartnerId
+      chatPartnerRoomId
       ownerId
       messages {
         items {

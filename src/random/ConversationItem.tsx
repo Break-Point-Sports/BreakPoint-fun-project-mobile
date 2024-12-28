@@ -5,11 +5,14 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+import MessagingDrawer from '../drawers/MessagingDrawer'
 
 import { GET_USER_DETAILS_LAMBDA_URL, PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
-const ConversationItem = ({chatPartnerId}) => {
+const ConversationItem = ({chatPartnerId, roomId}) => {
+  const messagingDrawerRef = useRef();
 
   const [chatPartnerDetails, setChatPartnerDetails] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState(null);
@@ -46,8 +49,8 @@ const ConversationItem = ({chatPartnerId}) => {
     >
       <TouchableOpacity
         style={styles.containerConversationListItem}
+        onPress={() => messagingDrawerRef.current.open()}
       >
-
         <Image
           source={{uri: profilePicUrl}}
           style={styles.imageProfileConversation}
@@ -63,6 +66,11 @@ const ConversationItem = ({chatPartnerId}) => {
           </Text>
         </View>
       </TouchableOpacity>
+      <MessagingDrawer 
+        messagingDrawerRef = {messagingDrawerRef}
+        chatPartnerDetails={chatPartnerDetails}
+        roomId={roomId}
+      />
     </View>
   );
 };
