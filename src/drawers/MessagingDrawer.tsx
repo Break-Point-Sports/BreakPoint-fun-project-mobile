@@ -4,13 +4,13 @@ import { IconButton } from 'react-native-paper';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 import { listMessagesForRoom } from '../graphql/queries';
 import { onCreateMessageByRoomId } from '../graphql/subscriptions'
 import { createMessage } from '../graphql/mutations';
 import commonStyles from '../util/CommonStyles';
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
-import { useState, useEffect } from 'react';
 import SentMessageItem from '../random/SentMessageItem';
 import { Observable } from '@reduxjs/toolkit';
 import ReceivedMessageItem from '../random/ReceivedMessageItem';
@@ -168,7 +168,9 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPa
         style={commonStyles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView>
+        <ScrollView
+          style={styles.scrollView}
+        >
           {messages.map((message, key) => {
             if (message.senderId === cognitoId) {
               return <SentMessageItem message={message} key={key}/>

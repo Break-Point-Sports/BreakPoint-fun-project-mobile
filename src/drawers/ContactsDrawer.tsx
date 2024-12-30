@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { GET_LEAGUE_MEMBERS_LAMBDA_URL } from '../util/Constants';
 
 
-const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage }) => {
+const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage, currentRooms }) => {
   const [toggleValue, setToggleValue] = useState('league');
   const currentLeague = useSelector(state => state.user.currentLeague)
   const cognitoId = useSelector(state => state.user.cognitoId)
@@ -23,10 +23,20 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage }) => {
   }, [])
 
   const getCurrentLeagueContacts = async() => {
+    console.log("currentRooms")
+    console.log(currentRooms)
+    const existingConversationPartners = []
+    for (const room of currentRooms) {
+      existingConversationPartners.push(room.chatPartnerId);
+    }
+
+    console.log("existingConversationPartners")
+    console.log(existingConversationPartners)
+
     const body = await getLeagueContacts()
     const contactsArray = []
     for (const contact of body) {
-      if (contact.cognitoId != cognitoId) {
+      if (contact.cognitoId != cognitoId && !existingConversationPartners.includes(contact.cognitoId)) {
         contactsArray.push(contact)
       }
     }
@@ -109,7 +119,7 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage }) => {
               </>
             :
               <>
-                <Text> We're having trouble getting your league contacts, please try again shortly </Text>
+                <Text> No league contacts available to message </Text>
               </>
           :
             ladderContacts.length !== 0 ?

@@ -13,7 +13,7 @@ import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
 
 
-const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messageScreenSetUpdateRoomsToggle}) => {
+const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messageScreenSetUpdateRoomsToggle, currentRooms}) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
   const firstName = useSelector(state => state.user.firstName)
   const lastName = useSelector(state => state.user.lastName)
@@ -238,6 +238,7 @@ const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messa
       <ContactsDrawer
         contactsDrawerRef={contactsDrawerRef}
         setContactToMessage={setContactToMessage}
+        currentRooms={currentRooms}
       />
     </RBSheet>
   );

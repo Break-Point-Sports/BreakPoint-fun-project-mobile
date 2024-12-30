@@ -96,6 +96,7 @@ const MessagingScreen = () => {
         newMessageRef={newMessageRef}
         messageScreenUpdateRoomsToggle={updateRoomsToggle}
         messageScreenSetUpdateRoomsToggle={setUpdateRoomsToggle}
+        currentRooms={rooms}
       />
     </>
   );
