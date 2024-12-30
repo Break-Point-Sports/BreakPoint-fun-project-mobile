@@ -16,7 +16,7 @@ const ReceivedMessageItem = ({message}) => {
             style={styles.imageProfileConversation}
           />
           <View
-            style={styles.sentMessage}
+            style={styles.receivedMessage}
           >
             <Text> {message?.content} </Text>
           </View>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row'
   },
-  sentMessage: {
+  receivedMessage: {
     width: '40%',
     backgroundColor: 'rgba(156, 17, 230, 0.25)',
     paddingTop: 10,
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 20,
+    marginBottom: 5
   }
 
 })

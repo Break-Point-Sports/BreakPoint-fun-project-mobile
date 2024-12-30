@@ -4,7 +4,7 @@ import { IconButton } from 'react-native-paper';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import { useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { listMessagesForRoom } from '../graphql/queries';
 import { onCreateMessageByRoomId } from '../graphql/subscriptions'
@@ -18,7 +18,7 @@ import ReceivedMessageItem from '../random/ReceivedMessageItem';
 const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPartnerRoomId}) => {
   const cognitoId = useSelector(state => state.user.cognitoId)
 
-  
+  const scrollViewRef = useRef();
   const [textInputValue, setTextInputValue] = useState('');
   const [messages, setMessages] = useState([])
 
@@ -169,7 +169,8 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPa
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          style={styles.scrollView}
+          ref={scrollViewRef}
+          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
         >
           {messages.map((message, key) => {
             if (message.senderId === cognitoId) {
@@ -188,7 +189,6 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPa
             value={textInputValue}
             onChangeText={text => onChangeText(text)}
             defaultValue='Message'
-            autoFocus
           />
           {
             textInputValue.trim() !== '' ?
