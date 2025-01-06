@@ -20,8 +20,21 @@ export const GET_LEAGUE_INFO_LAMBDA_URL = "https://kmya4uczpepmd4fkzzvs4or2sa0fa
 
 export const JOIN_LADDER_LAMBDA_URL = "https://ao7ivdfgvfnse4tvrv4qzlyoku0fanna.lambda-url.us-east-1.on.aws/";
 
-export const GET_LEAGUE_MEMBERS_LAMBDA_URL = "https://cblparnuo52ob5uutmon6j7tj40usefl.lambda-url.us-east-1.on.aws/"
+export const GET_LEAGUE_MEMBERS_LAMBDA_URL = "https://cblparnuo52ob5uutmon6j7tj40usefl.lambda-url.us-east-1.on.aws/";
 
+export const SUBMIT_NEW_MATCH_LAMBDA_URL = "https://b32vacqhwrswli3mzoxj4oxfqa0yrgel.lambda-url.us-east-1.on.aws";
+
+export const GET_LEAGUE_RECORD_LAMBDA_URL = "https://i67prqqqmnhqrmg4kvg6lvor5m0hqhwx.lambda-url.us-east-1.on.aws"
+
+export const loginScreenIdentifier: string = 'login';
 export const confirmCodeScreenIdentifier: string = 'confirmCode';
 export const homeScreenIdentifier: string = 'home';
-export const signUpNavigatorIdentifier: string = 'signup'
+export const signUpNavigatorIdentifier: string = 'signup';
+export const firstNameSignUpScreenIdentifier:string = 'signup-first-name';
+export const lastNameSignUpScreenIdentifier: string = 'signup-last-name';
+export const emailSignUpScreenIdentifier: string = 'signup-email'
+export const birthdaySignUpScreenIdentifier: string = 'signup-birthday';
+export const genderSignUpScreenIdentifier: string = 'signup-gender';
+export const citySignUpScreenIdentifier: string = 'signup-city';
+export const levelSignUpScreenIdentifier: string = 'signup-level';
+export const pictureSignUpScreenIdentifier: string = 'signup-picture';

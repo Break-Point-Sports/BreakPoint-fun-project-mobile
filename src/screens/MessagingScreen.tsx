@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useState, useRef } from 'react';
 import { Button } from 'react-native-paper';
@@ -82,14 +82,17 @@ const MessagingScreen = () => {
         <View
           style={styles.buttonView}
         >
-          <Button 
-            mode="contained" 
+          <TouchableOpacity
             onPress={() => newMessageRef.current.open()}
-            style={styles.newMessageButton}
-            labelStyle={styles.newMessageButtonLabel}
           >
-            {"New Message"}
-          </Button>
+            <Button 
+              mode="contained" 
+              style={styles.newMessageButton}
+              labelStyle={styles.newMessageButtonLabel}
+            >
+              {"New Message"}
+            </Button>
+          </TouchableOpacity>
         </View>
       </View>
       <NewMessageDrawer

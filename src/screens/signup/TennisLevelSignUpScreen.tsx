@@ -2,8 +2,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
-import { updateTennisLevel } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { updateTennisLevel } from '../../redux/slices/userSlice';
+import { citySignUpScreenIdentifier, pictureSignUpScreenIdentifier } from '../../util/Constants';
+import commonStyles from '../../util/CommonStyles';
 
 const TennisLevelSignUpScreen = () => {
   const navigation = useNavigation(); 
@@ -15,13 +18,30 @@ const TennisLevelSignUpScreen = () => {
       style={styles.root}
     >
       <IconButton
-        icon='arrow-right'
-        color={'grey'}
+        icon='arrow-left'
+        iconColor={'#9C11E6'}
         size={40}
-        style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-picture')}
-        disabled={tennisLevel === '' ? true : false}
+        style={commonStyles.leftArrowIcon}
+        onPress={() => navigation.navigate(citySignUpScreenIdentifier)}
       />
+
+      {tennisLevel === '' ? 
+        <IconButton
+          icon='arrow-right'
+          iconColor={'grey'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          disabled
+        />
+        :
+        <IconButton
+          icon='arrow-right'
+          iconColor={'#9C11E6'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          onPress={() => navigation.navigate(pictureSignUpScreenIdentifier)}
+        />
+      }      
       <Text
         style={styles.whatsUrName}
       >
@@ -31,6 +51,8 @@ const TennisLevelSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ tennisLevel === 'beginner' ? 'white' : 'black' }
+          buttonColor={ tennisLevel === 'beginner' ? '#9C11E6' : 'white' }
           mode={ tennisLevel === 'beginner' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateTennisLevel('beginner'))}
@@ -43,6 +65,8 @@ const TennisLevelSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ tennisLevel === 'intermediate' ? 'white' : 'black' }
+          buttonColor={ tennisLevel === 'intermediate' ? '#9C11E6' : 'white' }
           mode={ tennisLevel === 'intermediate' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateTennisLevel('intermediate'))}
@@ -54,6 +78,8 @@ const TennisLevelSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ tennisLevel === 'competitive' ? 'white' : 'black' }
+          buttonColor={ tennisLevel === 'competitive' ? '#9C11E6' : 'white' }
           mode={ tennisLevel === 'competitive' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateTennisLevel('competitive'))}
@@ -65,6 +91,8 @@ const TennisLevelSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ tennisLevel === 'advanced' ? 'white' : 'black' }
+          buttonColor={ tennisLevel === 'advanced' ? '#9C11E6' : 'white' }
           mode={ tennisLevel === 'advanced' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateTennisLevel('advanced'))}
@@ -85,6 +113,7 @@ const styles = StyleSheet.create({
     right: 5,
   },
   button: {
+    borderColor: '#9C11E6',
     width: 250,
     marginBottom: 10,
   },

@@ -1,13 +1,12 @@
-import { useDispatch } from 'react-redux';
 import { updateFirstName, updateLastName, updateGender, updateTennisLevel, 
   updateCurrentLadder, updateBirthday, updateCity, updatePastLeagues, updateCurrentLeague,
-  updateFutureLeague
+  updateFutureLeague, updateEmail
   } from '../redux/slices/userSlice';
 import {GET_USER_DETAILS_LAMBDA_URL} from '../util/Constants';
 
 export const updateUserInfo = async(cognitoId, dispatch) => {
   const URI = GET_USER_DETAILS_LAMBDA_URL + '?cognitoId='+ cognitoId;
-  console.log("Fetching " + URI);
+  console.log("Fetching user details" + URI);
   const response = await fetch(URI, {method: 'GET'});
   
   const body = await response.json();
@@ -15,6 +14,7 @@ export const updateUserInfo = async(cognitoId, dispatch) => {
 
   dispatch(updateFirstName(body.firstName));
   dispatch(updateLastName(body.lastName));
+  dispatch(updateEmail(body.email))
   dispatch(updateBirthday(body.birthday));
   dispatch(updateGender(body.gender));
   dispatch(updateTennisLevel(body.tennisLevel));

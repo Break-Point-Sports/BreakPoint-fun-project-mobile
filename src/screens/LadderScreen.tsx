@@ -198,22 +198,35 @@ const LadderScreen = () => {
             </View>
             </>
           :
-            <>
-              <Text
-                style={styles.laddersText}
-              > 
-                Ladder Play
-              </Text>
-              <Text>
-                Level:
-              </Text>
-              <Text>
-                Current Ranking:
-              </Text>
-              <Text>
-                Next Match:
-              </Text>
-            </>
+          <>
+            <Text
+              style={styles.laddersText}
+            >  
+              Ladder Play
+            </Text>
+            <View
+              style={styles.laddderInfoView}
+            >
+              <View
+                style={styles.textRow}
+              >
+                <Text
+                  style={styles.ladderInfoText}
+                >
+                  Level:
+                </Text>
+              </View>
+              <View
+                style={styles.textRow}
+              >
+                <Text
+                  style={styles.ladderInfoText}
+                >
+                  Current Ranking:
+                </Text>
+              </View>
+              </View>
+              </>
         }
         </PaperProvider>
         </View>
@@ -271,9 +284,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
   },
+  ladderInfoText: {
+    fontSize: 20
+  },
   ladderDetailsText: {
     fontSize: 20,
     marginBottom: 20
+  },
+  laddderInfoView: {
+    borderWidth: 1,
+    borderColor: '#9C11E6',
+    margin: 10,
+    padding: 10,
+    borderRadius: 10
   },
   laddersText: {
     fontSize: 30,
@@ -288,6 +311,10 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'white',
     flex: 1
+  },
+  textRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 })
 

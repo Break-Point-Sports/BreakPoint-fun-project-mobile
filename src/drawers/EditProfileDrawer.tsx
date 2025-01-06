@@ -65,9 +65,21 @@ const EditProfileDrawer = ({ editProfileRef }) => {
       />
     </TouchableOpacity>
     <ScrollView style={styles.scrollContainer}>
-
     <Button
       style={styles.locationButton}
+      labelStyle={styles.label}
+    >
+      First Name: {firstName}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Last Name: {lastName}
+    </Button>
+    <Button
+      style={styles.button}
       labelStyle={styles.label}
     >
       Location: {'Denver'}, {'CO'}
@@ -85,21 +97,6 @@ const EditProfileDrawer = ({ editProfileRef }) => {
     >
       Email: {email}
     </Button>
-
-    <Button
-      style={styles.button}
-      labelStyle={styles.label}
-    >
-      First Name: {firstName}
-    </Button>
-
-    <Button
-      style={styles.button}
-      labelStyle={styles.label}
-    >
-      Last Name: {lastName}
-    </Button>
-    
     <Button
       style={styles.button}
       labelStyle={styles.label}
@@ -146,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   button: {
-    borderColor: 'black',
+    borderColor: '#9C11E6',
     borderWidth: 1,
     marginBottom: 10,
     textAlign: 'left',
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
     left: 5
   },
   deleteButton: {
-    borderColor: 'black',
+    borderColor: 'red',
     borderWidth: 1,
     textAlign: 'left',
     marginHorizontal: 10,
@@ -177,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   locationButton: {
-    borderColor: 'black',
+    borderColor: '#9C11E6',
     borderWidth: 1,
     marginBottom: 10,
     marginTop: 20,
@@ -187,7 +184,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   label: {
-    color: '#9C11E6'
+    color: 'black'
   },
 })
 

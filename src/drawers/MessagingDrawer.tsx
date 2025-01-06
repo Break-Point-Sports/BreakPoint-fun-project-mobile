@@ -165,8 +165,8 @@ const MessagingDrawer = ({messagingDrawerRef, chatPartnerDetails, roomId, chatPa
         source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${chatPartnerDetails?.cognitoId}/profile_pic.jpg`}}
       />
       <KeyboardAvoidingView
-        style={commonStyles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={commonStyles.keyboardAvoidingView}
       >
         <ScrollView
           ref={scrollViewRef}

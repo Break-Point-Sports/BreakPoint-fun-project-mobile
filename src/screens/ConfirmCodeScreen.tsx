@@ -1,10 +1,11 @@
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import ConfirmCodeInput from '../inputs/ConfirmCodeInput';
 import { IconButton } from 'react-native-paper';
 import AuthButton from '../buttons/AuthButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { updateUserInfo } from '../util/UpdateUserInfo';
+import { signUpNavigatorIdentifier, homeScreenIdentifier, loginScreenIdentifier } from '../util/Constants';
 
 const ConfirmCodeScreen = ( {navigation} ) => {
   const [showIndicator, setShowIndicator] = useState(false);
@@ -18,10 +19,10 @@ const ConfirmCodeScreen = ( {navigation} ) => {
     console.log('Getting user profile info for user: ' + cognitoId)
     try {
       await updateUserInfo(cognitoId, dispatch);
-      navigation.navigate('home');
+      navigation.navigate(homeScreenIdentifier);
     } catch(error) {
       console.log(error)
-      navigation.navigate('signup')
+      navigation.navigate(signUpNavigatorIdentifier)
     }
   }
 
@@ -37,51 +38,50 @@ const ConfirmCodeScreen = ( {navigation} ) => {
   }
 
   return (
-    <View
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.rootView}
+      keyboardVerticalOffset={10}
     >
       <IconButton
         icon='arrow-left'
         color={'grey'}
         size={40}
         style={styles.arrowIcon}
-        onPress={() => navigation.navigate('login')}
+        onPress={() => navigation.navigate(loginScreenIdentifier)}
       />
-      <View
-        style={styles.confirmCodeInputWrapper}
-      >
-        <ConfirmCodeInput 
-          setConfirmButtonActive={setButtonActiveFuncAndAltKey}
+
+
+      <ConfirmCodeInput 
+        setConfirmButtonActive={setButtonActiveFuncAndAltKey}
+      />
+
+      { showIndicator ? 
+
+        <ActivityIndicator
+          style={styles.activityIndicator}
+          size='large'
+          color='#9C11E6'
         />
 
-        { showIndicator ? 
+      :
+      
+        <AuthButton 
+          key={buttonKey}
+          onPress={onPress}
+          buttonActive={buttonActive}
+          label={"Confirm"}
+        />
+      }
 
-          <ActivityIndicator
-            style={styles.activityIndicator}
-            size='large'
-            color='#9C11E6'
-          />
-
-        :
-        
-          <AuthButton 
-            key={buttonKey}
-            onPress={onPress}
-            buttonActive={buttonActive}
-            label={"Confirm"}
-          />
-        }
-
-      </View>
-
-    </View>
+    </KeyboardAvoidingView>
   )
 
 }
 
 const styles = StyleSheet.create({
   activityIndicator: {
-    marginTop: 25
+    marginTop: 20
   },
   arrowIcon: {
     position: 'absolute',
@@ -92,26 +92,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
   },
-  confirmCodeInputWrapper: {
-    position: 'absolute',
-    bottom: 320,
-  },
   rootView: {
-    display: 'flex',
-    height: '100%',
+    flex:1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     backgroundColor: '#fff',
-  },
-  submitButton: {
-    display: 'flex',
-    width: 320,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#9C11E6',
-    justifyContent: 'center',
-    marginTop: 5,
+    marginBottom: 25,
   },
 })
 

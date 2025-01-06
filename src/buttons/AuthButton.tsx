@@ -1,17 +1,21 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 
 const AuthButton = ({onPress, buttonActive, label}) => {
   return (
     buttonActive? 
-      <Button 
-        mode="contained" 
+      <TouchableOpacity
         onPress={onPress}
-        style={styles.submitButtonActive}
-        labelStyle={styles.buttonLabel}
       >
-      {label}
-    </Button>
+        <Button 
+          mode="contained" 
+          style={styles.submitButtonActive}
+          labelStyle={styles.buttonLabel}
+        >
+        {label}
+        </Button>
+      </TouchableOpacity>
+
   
       :
       <Button 

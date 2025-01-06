@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useRef } from 'react';
 import { Button } from 'react-native-paper';
-import EditProfileDrawer from '../drawers/EditProfileDrawer';
-import SettingsDrawer from '../drawers/SettingsDrawer';
 import { useDispatch, useSelector } from 'react-redux'
 import { Image } from 'expo-image';
 import { signOut } from 'aws-amplify/auth';
+
+import EditProfileDrawer from '../drawers/EditProfileDrawer';
+import SettingsDrawer from '../drawers/SettingsDrawer';
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 import { updateFirstName, updateLastName, updateBirthday, updateGender, updateTennisLevel, updateCurrentLeague, updatePastLeagues, updateCity, updateCognitoId, updateEmail, updatePhoneNumber } from '../redux/slices/userSlice';
 
@@ -14,7 +15,8 @@ const ProfileScreen = ({ navigation }) => {
   const settingsRef = useRef();
   const dispatch = useDispatch();
   const pictureOneURL = useSelector(state => state.user.pictureOneURL)
-  const name = useSelector(state => state.user.name)
+  const firstName = useSelector(state => state.user.firstName)
+  const lastName = useSelector(state => state.user.lastName)
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
 
@@ -51,35 +53,39 @@ const ProfileScreen = ({ navigation }) => {
       <Text
         style={styles.name}
       >
-        {name}
+        {firstName + ' ' + lastName}
       </Text>
-      <Button
-        style={styles.missionButton}
+      <TouchableOpacity
         onPress={() => editProfileRef.current.open()}
-        labelStyle={styles.label}
       >
-        Edit Profile
-      </Button>
+        <Button
+          style={styles.button}
+          labelStyle={styles.label}
+        >
+          Edit Profile
+        </Button>
+      </TouchableOpacity>
+
       <Button
-        style={styles.missionButton}
+        style={styles.button}
         labelStyle={styles.label}
       >
           Our Mission
       </Button>
       <Button
-        style={styles.faqButton}
+        style={styles.button}
         labelStyle={styles.label}
       >
         FAQs
       </Button>
       <Button
-        style={styles.contactButton}
+        style={styles.button}
         labelStyle={styles.label}
       >
         Contact Us
       </Button>
       <Button
-        style={styles.contactButton}
+        style={styles.button}
         labelStyle={styles.label}
       >
         Community Standards
@@ -87,13 +93,16 @@ const ProfileScreen = ({ navigation }) => {
       <View
         style={styles.logoutButtonView}
       >
-        <Button
-          style={styles.logoutButton}
-          labelStyle={styles.logoutLabel}
+        <TouchableOpacity
           onPress={() => logout()}
         >
-          Logout
-        </Button>
+          <Button
+            style={styles.logoutButton}
+            labelStyle={styles.logoutLabel}
+          >
+            Logout
+          </Button>
+        </TouchableOpacity>
       </View>
 
       <EditProfileDrawer 
@@ -108,61 +117,9 @@ const ProfileScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  accountSettingsText: {
-    marginLeft: 15,
-    marginTop: 20,
-  },
-  button: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start'
-  },
-  cogButton: {
-    position: 'absolute',
-    right: 10
-  },
-  contactButton: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-  },
-  faqButton: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-  },
-  locationButton: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start',
-  },
   label: {
-    color: '#9C11E6'
+    color: 'black'
   },
-  logo: {
-    width: 284,
-    height:220,
-    alignSelf: 'center',
-    marginTop: 100
-  },
-  // logoutButton: {
-  //   borderColor: 'black',
-  //   backgroundColor: '#9C11E6',
-  //   borderWidth: 1,
-  //   marginBottom: 1,
-  //   textAlign: 'left',
-  //   padding: 0,
-  // },
   logoutButtonView: {
     height: '100%',
     flex: 1,
@@ -181,16 +138,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
   },
-  // logoutLabel: {
-  //   color: 'white'
-
-  // },
-  missionButton: {
-    borderColor: 'black',
+  button: {
+    borderColor: '#9C11E6',
     borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
+    marginBottom: 10,
+    marginHorizontal: 10,
+    padding: 5,
   },
   name: {
     alignSelf: 'center',

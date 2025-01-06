@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { TextInput, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux'
+
 import { updateLastName } from '../../redux/slices/userSlice';
+import commonStyles from '../../util/CommonStyles';
+import { firstNameSignUpScreenIdentifier, emailSignUpScreenIdentifier } from '../../util/Constants';
 
 const LastNameSignUpScreen = () => {
   const navigation = useNavigation(); 
@@ -10,57 +13,85 @@ const LastNameSignUpScreen = () => {
   const lastName = useSelector(state => state.user.lastName)
 
   return (
-    <View
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.root}
+      keyboardVerticalOffset={10}
     >
       <IconButton
-        icon='arrow-right'
-        iconColor={'grey'}
+        icon='arrow-left'
+        iconColor={'#9C11E6'}
         size={40}
-        style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-email')}
-        disabled={lastName === '' ? true : false}
+        style={commonStyles.leftArrowIcon}
+        onPress={() => navigation.navigate(firstNameSignUpScreenIdentifier)}
       />
-      <Text
-        style={styles.whatsUrName}
+      {lastName === '' ? 
+      
+        <IconButton
+          icon='arrow-right'
+          iconColor={'grey'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          disabled
+        />
+        :
+        <IconButton
+          icon='arrow-right'
+          iconColor={'#9C11E6'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          onPress={() => navigation.navigate(emailSignUpScreenIdentifier)}
+        />
+      }
+      <View
+        style={styles.wrapperView}
       >
-        What's your last name?
-      </Text>
-      <TextInput
-        mode='outlined'
-        style={styles.textInput}
-        value={lastName}
-        onChangeText={(text) => dispatch(updateLastName(text))}
-      />
-    </View>
+
+        <Text
+          style={styles.whatsUrName}
+        >
+          What's your last name?
+        </Text>
+        <TextInput
+          autoFocus
+          outlineColor='#9C11E6'
+          activeOutlineColor='#9C11E6'
+          mode='outlined'
+          style={styles.textInput}
+          value={lastName}
+          onChangeText={(text) => dispatch(updateLastName(text))}
+        />
+      </View>
+
+    </KeyboardAvoidingView>
   )
 }
 
 
 
 const styles = StyleSheet.create({
-  arrowIcon: {
-    position: 'absolute',
-    top: 20,
-    right: 5,
-  },
   root: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
     width: '100%',
     backgroundColor: 'white',
-    justifyContent: 'center',
   },
   textInput: {
     height: 50,
     width: 300,
     alignSelf: 'center',
+    marginBottom: 50
   },
   whatsUrName: {
     fontSize: 24,
     alignSelf: 'center'
   },
+  wrapperView: {
+    height:'75%',
+    width: '100%',
+    justifyContent: 'flex-end',
+  }
 })
 
 export default LastNameSignUpScreen;

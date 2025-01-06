@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { GET_LEAGUE_MEMBERS_LAMBDA_URL } from '../util/Constants';
-
+import getLeagueContacts from '../util/GetLeagueContacts';
 
 const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage, currentRooms }) => {
   const [toggleValue, setToggleValue] = useState('league');
@@ -16,10 +15,7 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage, currentRooms }
   const [ladderContacts, setLadderContacts] = useState(['Steve Madden', 'John Cadsf', 'Fortran McDumb']);
 
   useEffect(() => {
-
     getCurrentLeagueContacts()
-
-
   }, [])
 
   const getCurrentLeagueContacts = async() => {
@@ -33,7 +29,7 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage, currentRooms }
     console.log("existingConversationPartners")
     console.log(existingConversationPartners)
 
-    const body = await getLeagueContacts()
+    const body = await getLeagueContacts(currentLeague)
     const contactsArray = []
     for (const contact of body) {
       if (contact.cognitoId != cognitoId && !existingConversationPartners.includes(contact.cognitoId)) {
@@ -42,16 +38,6 @@ const ContactsDrawer = ({ contactsDrawerRef, setContactToMessage, currentRooms }
     }
     console.log("contacts array: " + contactsArray)
     setLeagueContacts(contactsArray);
-    return body
-  }
-
-  const getLeagueContacts = async () => {
-    const URI = GET_LEAGUE_MEMBERS_LAMBDA_URL + `?league=${currentLeague}&whichLeague=currentLeague`
-    console.log("Fetching " + URI);
-    const response = await fetch(URI, {method: "GET"});
-    const body = await response.json();
-    console.log("league contacts response: ")
-    console.log(body)
     return body
   }
 
@@ -157,7 +143,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 5
-
   },
   drawerHeader: {
     marginTop: 50,

@@ -21,6 +21,16 @@ const commonStyles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-end',
   },
+  leftArrowIcon: {
+    position: 'absolute',
+    top: 20,
+    left: 5,
+  },
+  rightArrowIcon: {
+    position: 'absolute',
+    top: 20,
+    right: 5,
+  },
   sendTextButton: {
     position: 'absolute',
     right: 0,
@@ -33,6 +43,7 @@ const commonStyles = StyleSheet.create({
     borderColor: '#9C11E6',
     borderRadius: 28,
     alignItems: 'center',
+    marginTop: 10,
     marginBottom: 20,
     marginHorizontal: 5,
     paddingHorizontal: 20,
