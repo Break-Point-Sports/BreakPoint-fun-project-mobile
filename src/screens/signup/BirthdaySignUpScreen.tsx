@@ -3,9 +3,11 @@ import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { updateBirthday } from '../../redux/slices/userSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { updateBirthday } from '../../redux/slices/userSlice';
+import commonStyles from '../../util/CommonStyles';
+import { emailSignUpScreenIdentifier, genderSignUpScreenIdentifier } from '../../util/Constants';
 
 const BirthdaySignUpScreen = () => {
   const navigation = useNavigation(); 
@@ -25,19 +27,27 @@ const BirthdaySignUpScreen = () => {
       style={styles.root}
     >
       <IconButton
-        icon='arrow-right'
-        color={'grey'}
+        icon='arrow-left'
+        iconColor={'#9C11E6'}
         size={40}
-        style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-gender')}
-        disabled={birthday === '' ? true : false}
+        style={commonStyles.leftArrowIcon}
+        onPress={() => navigation.navigate(emailSignUpScreenIdentifier)}
       />
+      <IconButton
+        icon='arrow-right'
+        iconColor={'#9C11E6'}
+        size={40}
+        style={commonStyles.rightArrowIcon}
+        onPress={() => navigation.navigate(genderSignUpScreenIdentifier)}
+      />
+
       <Text
         style={styles.whatsUrBirthday}
       >
         What's your birthday?
       </Text>
       <DateTimePicker
+        style={styles.datePicker}
         display='spinner'
         value={date}
         mode='date'
@@ -54,6 +64,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     right: 5,
+  },
+  datePicker:{
+    alignSelf: 'center'
   },
   root: {
     display: 'flex',

@@ -5,32 +5,11 @@ export const createMessage = /* GraphQL */ `
   mutation CreateMessage($input: MessageInput!) {
     createMessage(input: $input) {
       id
-      content {
-        text
-        imageId
-        __typename
-      }
-      owner
       createdAt
-      updatedAt
       roomId
-      __typename
-    }
-  }
-`;
-export const updateMessage = /* GraphQL */ `
-  mutation UpdateMessage($input: MessageInput!) {
-    updateMessage(input: $input) {
-      id
-      content {
-        text
-        imageId
-        __typename
-      }
-      owner
-      createdAt
-      updatedAt
-      roomId
+      senderId
+      recipientId
+      content
       __typename
     }
   }
@@ -39,26 +18,50 @@ export const createRoom = /* GraphQL */ `
   mutation CreateRoom($input: RoomInput!) {
     createRoom(input: $input) {
       id
+      createdAt
       name
+      chatPartnerId
+      chatPartnerRoomId
+      ownerId
       messages {
         items {
           id
-          content {
-            text
-            imageId
-            __typename
-          }
-          owner
           createdAt
-          updatedAt
           roomId
+          senderId
+          recipientId
+          content
           __typename
         }
         nextToken
         __typename
       }
+      __typename
+    }
+  }
+`;
+export const updateChatPartnerRoomId = /* GraphQL */ `
+  mutation UpdateChatPartnerRoomId($input: ChatPartnerRoomIdInput!) {
+    updateChatPartnerRoomId(input: $input) {
+      id
       createdAt
-      updatedAt
+      name
+      chatPartnerId
+      chatPartnerRoomId
+      ownerId
+      messages {
+        items {
+          id
+          createdAt
+          roomId
+          senderId
+          recipientId
+          content
+          __typename
+        }
+        nextToken
+        __typename
+      }
       __typename
     }
   }

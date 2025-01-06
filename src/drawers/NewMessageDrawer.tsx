@@ -1,22 +1,145 @@
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { useSelector } from 'react-redux'
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { TextInput, IconButton, PaperProvider, Button, Portal, Modal } from 'react-native-paper';
-// import Slider from '@react-native-community/slider';
+import { useState, useRef, useEffect } from 'react';
+import { IconButton, Button } from 'react-native-paper';
+import { generateClient } from 'aws-amplify/data';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
+import { createMessage, createRoom, updateChatPartnerRoomId } from '../graphql/mutations'
+import ContactsDrawer from './ContactsDrawer';
+import commonStyles from '../util/CommonStyles';
+import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
 
 
 
-const NewMessageDrawer = ({ newMessageRef }) => {
-  const phoneNumber = useSelector(state => state.user.phoneNumber)
+const NewMessageDrawer = ({ newMessageRef, messageScreenUpdateRoomsToggle, messageScreenSetUpdateRoomsToggle, currentRooms}) => {
+  const cognitoId = useSelector(state => state.user.cognitoId)
+  const firstName = useSelector(state => state.user.firstName)
+  const lastName = useSelector(state => state.user.lastName)
 
-  const navigation = useNavigation(); 
+  const contactsDrawerRef = useRef();
+  const [contactToMessage, setContactToMessage] = useState(null);
+  const [reloadKey, setReloadKey] = useState('a');
+  const [textInputValue, setTextInputValue] = useState("")
 
-  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (contactToMessage !== null) {
+      console.log("le contact: " + contactToMessage.firstName)
+      if (reloadKey === 'a') {
+        setReloadKey('b');
+      } else {
+        setReloadKey('a')
+      }
+    }
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  }, [contactToMessage])
+
+  const onChangeText = (text) => {
+    setTextInputValue(text);
+  }
+
+  const sendMessage = async () => {
+    try {
+      const session = await fetchAuthSession();
+
+      const client = generateClient({
+        authMode: 'userPool',
+        authToken: session.tokens.accessToken.toString()
+      })
+
+      console.log("Calling client to create new room for sender");
+      const createRoomResult1 = await client.graphql({
+        query: createRoom,
+        variables: {
+          input: {
+            name: `${contactToMessage.firstName} ${contactToMessage.lastName}`,
+            chatPartnerId: contactToMessage.cognitoId,
+            ownerId: cognitoId
+          }
+        }
+      })
+      console.log("created new room for sender successully")
+      const roomId1 = createRoomResult1["data"]["createRoom"]["id"]
+      console.log("roomId sender: " + roomId1)
+
+      console.log("Calling client to create new room for recepient");
+      const createRoomResult2 = await client.graphql({
+        query: createRoom,
+        variables: {
+          input: {
+            name: `${firstName} ${lastName}`,
+            chatPartnerId: cognitoId,
+            chatPartnerRoomId: roomId1,
+            ownerId: contactToMessage.cognitoId,
+          }
+        }
+      })
+      console.log("created new room for recepient successully")
+      const roomId2 = createRoomResult2["data"]["createRoom"]["id"]
+      console.log("roomId recepient: " + roomId2)
+
+      console.log(`Updating room1 chatPartnerRoomId with roomId2: ${roomId2}`)
+      const updateRoom1WithChatPartnerRoomId2Result = await client.graphql({
+        query: updateChatPartnerRoomId,
+        variables: {
+          input: {
+            roomId: roomId1,
+            chatPartnerRoomId: roomId2
+          }
+        }
+      })
+
+      console.log("Result: ")
+      console.log(updateRoom1WithChatPartnerRoomId2Result)
+      console.log("Creating message in room 1 (for sender)");
+
+      const createMessageResult1 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: roomId1,
+            senderId: cognitoId,
+            recipientId: contactToMessage.cognitoId,
+            content:textInputValue,
+          }
+        }
+      })
+
+      console.log("Creating message in room 2 (for recipient)");
+
+      const createMessageResult2 = await client.graphql({
+        query: createMessage,
+        variables: {
+          input: {
+            roomId: roomId2,
+            senderId: cognitoId,
+            recipientId: contactToMessage.cognitoId,
+            content: textInputValue,
+          }
+        }
+      })
+
+      console.log("Created new messages successfully")
+      console.log(createMessageResult2['data']['createMessage'])
+
+      setTextInputValue("");
+      if (messageScreenUpdateRoomsToggle === 'a') {
+        messageScreenSetUpdateRoomsToggle('b')
+      } else {
+        messageScreenSetUpdateRoomsToggle('a');
+      }
+      newMessageRef.current.close()
+    } catch(error) {
+      console.log("something went wrong sending message");
+      console.log(error);
+    }
+  }
+
+  const onClose = () => {
+    setContactToMessage(null);
+    newMessageRef.current.close()
+  }
 
   return (
     <RBSheet
@@ -30,141 +153,98 @@ const NewMessageDrawer = ({ newMessageRef }) => {
         draggableIcon: {
             backgroundColor: "#000"
         }
-    }}
-  >
-    <PaperProvider>
-        <Portal>
-            <View
-                style={styles.drawerHeader}
-            >
+      }}
+    >
+      <View
+        style={commonStyles.drawerHeader}
+      >
       
-                <IconButton
-                  icon='close'
-                  iconColor='#9C11E6'
-                  size={30}
-                  onPress={() => newMessageRef.current.close()}
-                  style={styles.closeButton}
-                />
-            </View>
-            <View
-                style={styles.mainView}
+        <IconButton
+          icon='close'
+          iconColor='#9C11E6'
+          size={40}
+          onPress={() => onClose()}
+          style={commonStyles.closeButton}
+        />
+      </View>
+      <TouchableOpacity
+        onPress={() => contactsDrawerRef.current.open()}
+        style={styles.toTouchableOpacity}
+        key={reloadKey}
+      >
+          {contactToMessage === null?
+            <Text
+                style={styles.toText}
             >
-                <TouchableOpacity
-                    onPress={() => showModal()}
-                    style={styles.toTouchableOpacity}
-                >
-                    <Text
-                        style={styles.toText}
-                    >
-                        To:
-                    </Text>
-                </TouchableOpacity>
-                <View
-                  style={styles.textInputAndButtonView}
-                >
-                  <TextInput
-                    style={styles.messagingTextInput}
-                    mode='outlined'
-                    multiline={true}
-                    autoFocus
-                  />
-                  <Button 
-                    mode="contained" 
-                    onPress={() => newMessageRef.current.open()}
-                    style={styles.sendMessageButton}
-                    labelStyle={styles.sendMessageButtonLabel}
-                  >
-                    {"Send Message"}
-                  </Button>
-                </View>
-
-            </View>
-
-            <Modal 
-                visible={visible} 
-                onDismiss={hideModal} 
-                contentContainerStyle={styles.modalContainer}
-                
-            >
-                <ScrollView
-                    style={styles.modalScrollView}
-                >
-                    <Text>
-                        Alecio M.
-                    </Text>
-                </ScrollView>
-            </Modal>
-        </Portal>
-    </PaperProvider>
-  </RBSheet>
+                To:
+            </Text>
+            :
+            <Text
+              style={styles.toText}
+             >
+              To: {contactToMessage.firstName} {contactToMessage.lastName}
+            </Text>
+          }
+      </TouchableOpacity>
+          
+      {contactToMessage === null ?
+          <></>
+        :
+          <TouchableOpacity
+            onPress={() => contactsDrawerRef.current.open()}
+          >
+            <Image
+              style={commonStyles.profileImg}
+              source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${contactToMessage?.cognitoId}/profile_pic.jpg`}}
+            />
+          </TouchableOpacity>
+      }
+      
+      <KeyboardAvoidingView
+        style={commonStyles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View
+          style={commonStyles.textInputWrapper}
+        >
+          <TextInput
+            style={commonStyles.textInput}
+            multiline={true}
+            value={textInputValue}
+            onChangeText={text => onChangeText(text)}
+            defaultValue='Message'
+            autoFocus
+          />
+          {
+            textInputValue.trim() !== '' ?
+              <IconButton
+                icon='arrow-up'
+                iconColor='#9C11E6'
+                size={40}
+                onPress={() => sendMessage()}
+                style={commonStyles.sendTextButton}
+              />
+            :
+              <IconButton
+                icon='arrow-up'
+                iconColor='rgba(156, 17, 230, 0.25)'
+                size={40}
+                disabled
+                style={commonStyles.sendTextButton}
+              />
+          }
+        </View>
+      </KeyboardAvoidingView>
+      <ContactsDrawer
+        contactsDrawerRef={contactsDrawerRef}
+        setContactToMessage={setContactToMessage}
+        currentRooms={currentRooms}
+      />
+    </RBSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 1,
-    textAlign: 'left',
-    padding: 0,
-    alignItems: 'flex-start'
-  },
-  closeButton: {
-    position: 'absolute',
-    left: 5
-  },
-  drawerHeader: {
-    marginTop: 50,
-    marginBottom: 15,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  label: {
-    color: '#9C11E6'
-  },
-  mainView: {
-    display: 'flex',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  messagingTextInput: {
-    height: 100,
-    width: '95%',
-    alignSelf: 'center',
-    marginBottom:10
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    height: 300,
-    width: 250,
-    alignSelf: 'center',
-    position: 'absolute',
-    top: 50
-  },
-  modalScrollView: {
-    height: 100,
-    width: 100
-  },
-  sendMessageButton: {
-    display: 'flex',
-    width: 320,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#9C11E6',
-    justifyContent: 'center',
-    alignSelf: 'center'
-  },
-  sendMessageButtonLabel: {
-    fontSize: 18,
-    color: '#fff',
-  },
-  textInputAndButtonView: {
-    marginBottom: 450,
-    alignItems: 'center'
-  },
   toText: {
     fontSize: 30,
     marginLeft: 20,
@@ -172,7 +252,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   toTouchableOpacity: {
-    height: 50
+    height: 50,
   }
 })
 

@@ -5,18 +5,56 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
 
-const ConversationItem = () => {
+import MessagingDrawer from '../drawers/MessagingDrawer'
+
+import { GET_USER_DETAILS_LAMBDA_URL, PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
+
+const ConversationItem = ({chatPartnerId, roomId, chatPartnerRoomId}) => {
+  const messagingDrawerRef = useRef();
+
+  const [chatPartnerDetails, setChatPartnerDetails] = useState(null);
+  const [profilePicUrl, setProfilePicUrl] = useState(null);
+  const [reloadKey, setReloadKey] = useState('a');
+
+  useEffect(() => {
+    if (reloadKey === 'a') {
+      setReloadKey('b')
+    } else {
+      setReloadKey('a')
+    }
+}, [chatPartnerDetails?.cognitoId])
+
+  useEffect(() => {
+    getChatPartnerInfo()
+  }, [])
+
+
+
+  const getChatPartnerInfo = async() => {
+    const URI = GET_USER_DETAILS_LAMBDA_URL + '?cognitoId='+ chatPartnerId;
+    console.log("Fetching " + URI);
+    const response = await fetch(URI, {method: 'GET'});
+    
+    const body = await response.json();
+    console.log(body);
+    setProfilePicUrl(`${PROFILE_PIC_BUCKET_BASE_URL}/${body.cognitoId}/profile_pic.jpg`)
+    setChatPartnerDetails(body);
+  }
+  
   return (
     <View
       style={styles.containerConversationListItemWithDrawer}
     >
       <TouchableOpacity
         style={styles.containerConversationListItem}
+        onPress={() => messagingDrawerRef.current.open()}
       >
         <Image
-          // source={glowstikLogo180}
+          source={{uri: profilePicUrl}}
           style={styles.imageProfileConversation}
+          key={reloadKey}
         />
         <View
           style={styles.containerUsernameAndPreview}
@@ -24,15 +62,16 @@ const ConversationItem = () => {
           <Text
             style={styles.textUsername}
           >
-            Alecio
-          </Text>
-          <Text
-            style={styles.textPreview}
-          >
-            Hello
+            {chatPartnerDetails?.firstName} {chatPartnerDetails?.lastName}
           </Text>
         </View>
       </TouchableOpacity>
+      <MessagingDrawer 
+        messagingDrawerRef = {messagingDrawerRef}
+        chatPartnerDetails={chatPartnerDetails}
+        roomId={roomId}
+        chatPartnerRoomId={chatPartnerRoomId}
+      />
     </View>
   );
 };

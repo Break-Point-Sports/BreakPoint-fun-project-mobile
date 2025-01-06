@@ -2,25 +2,28 @@
 // this is an auto generated file. This will be overwritten
 
 export const listRooms = /* GraphQL */ `
-  query ListRooms($limit: Int) {
-    listRooms(limit: $limit) {
+  query ListRooms($ownerId: String!) {
+    listRooms(ownerId: $ownerId) {
       items {
         id
+        createdAt
         name
+        chatPartnerId
+        chatPartnerRoomId
+        ownerId
         messages {
           items {
             id
-            owner
             createdAt
-            updatedAt
             roomId
+            senderId
+            recipientId
+            content
             __typename
           }
           nextToken
           __typename
         }
-        createdAt
-        updatedAt
         __typename
       }
       nextToken
@@ -33,15 +36,11 @@ export const listMessagesForRoom = /* GraphQL */ `
     listMessagesForRoom(roomId: $roomId, sortDirection: $sortDirection) {
       items {
         id
-        content {
-          text
-          imageId
-          __typename
-        }
-        owner
         createdAt
-        updatedAt
         roomId
+        senderId
+        recipientId
+        content
         __typename
       }
       nextToken

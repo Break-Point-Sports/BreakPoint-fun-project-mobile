@@ -3,7 +3,9 @@ import { Dimensions, StyleSheet, View, Text, TouchableOpacity, Image, ScrollView
 import { IconButton, Button, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useRef } from "react";
+
 import { PROFILE_PIC_BUCKET_BASE_URL } from '../util/Constants';
+import commonStyles from "../util/CommonStyles";
 
 const EditProfileDrawer = ({ editProfileRef }) => {
   const [showActivityIndicatorImg1, setShowActivityIndicatorImg1] = useState(false)
@@ -43,12 +45,12 @@ const EditProfileDrawer = ({ editProfileRef }) => {
         <IconButton
           icon='close'
           iconColor='#9C11E6'
-          size={30}
+          size={40}
           onPress={() => editProfileRef.current.close()}
           style={styles.closeButton}
         />
       <Text
-        style={styles.settingsText}
+        style={commonStyles.drawerHeaderText}
       >
         Edit Profile
       </Text>
@@ -58,14 +60,26 @@ const EditProfileDrawer = ({ editProfileRef }) => {
         onPress={() => {}}
     >
       <Image
-        style={styles.profileImg}
+        style={commonStyles.profileImg}
         source={{uri: `${PROFILE_PIC_BUCKET_BASE_URL}/${cognitoId}/profile_pic.jpg`}}
       />
     </TouchableOpacity>
     <ScrollView style={styles.scrollContainer}>
-
     <Button
       style={styles.locationButton}
+      labelStyle={styles.label}
+    >
+      First Name: {firstName}
+    </Button>
+
+    <Button
+      style={styles.button}
+      labelStyle={styles.label}
+    >
+      Last Name: {lastName}
+    </Button>
+    <Button
+      style={styles.button}
       labelStyle={styles.label}
     >
       Location: {'Denver'}, {'CO'}
@@ -83,21 +97,6 @@ const EditProfileDrawer = ({ editProfileRef }) => {
     >
       Email: {email}
     </Button>
-
-    <Button
-      style={styles.button}
-      labelStyle={styles.label}
-    >
-      First Name: {firstName}
-    </Button>
-
-    <Button
-      style={styles.button}
-      labelStyle={styles.label}
-    >
-      Last Name: {lastName}
-    </Button>
-    
     <Button
       style={styles.button}
       labelStyle={styles.label}
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   button: {
-    borderColor: 'black',
+    borderColor: '#9C11E6',
     borderWidth: 1,
     marginBottom: 10,
     textAlign: 'left',
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
     left: 5
   },
   deleteButton: {
-    borderColor: 'black',
+    borderColor: 'red',
     borderWidth: 1,
     textAlign: 'left',
     marginHorizontal: 10,
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   locationButton: {
-    borderColor: 'black',
+    borderColor: '#9C11E6',
     borderWidth: 1,
     marginBottom: 10,
     marginTop: 20,
@@ -185,20 +184,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   label: {
-    color: '#9C11E6'
-  },
-  profileImg: {
-    alignSelf: 'center',
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginTop: 10,
-    marginBottom: 10,
-    backgroundColor: 'grey',
-  },
-  settingsText: {
-    fontSize: 25,
-    color: '#9C11E6'
+    color: 'black'
   },
 })
 

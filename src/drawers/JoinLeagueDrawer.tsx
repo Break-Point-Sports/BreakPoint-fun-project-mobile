@@ -1,5 +1,5 @@
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { Dimensions, StyleSheet, Text, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react';
 import { Button, IconButton, Card, Dialog, Portal, PaperProvider, TextInput, } from 'react-native-paper';
@@ -52,7 +52,8 @@ const JoinLeagueDrawer = ({ joinLeagueRef }) => {
     console.log(`Adding ${cognitoId} to ${leagueId}`);
     const body = JSON.stringify({
       cognitoId: cognitoId,
-      leagueId: leagueId
+      leagueId: leagueId,
+      currentOrFuture: 'current'
     })
     console.log(body);
     
@@ -120,7 +121,7 @@ const JoinLeagueDrawer = ({ joinLeagueRef }) => {
                 <IconButton
                   icon='close'
                   iconColor='#9C11E6'
-                  size={30}
+                  size={40}
                   onPress={() => onClose()}
                   style={styles.closeButton}
                 />

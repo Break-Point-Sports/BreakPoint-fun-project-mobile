@@ -1,12 +1,13 @@
-import { StyleSheet, Image, View, TextInput, ActivityIndicator } from 'react-native';
-import AuthButton from '../buttons/AuthButton';
-import { signIn, signUp, getCurrentUser } from 'aws-amplify/auth';
+import { StyleSheet, Image, View, KeyboardAvoidingView, ActivityIndicator, Platform } from 'react-native';
+import { signIn, signUp, getCurrentUser, signOut } from 'aws-amplify/auth';
 import PhoneInput, {ICountry} from 'react-native-international-phone-number';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
+
 import { updatePhoneNumber } from '../redux/slices/userSlice';
 import { updateCognitoId } from '../redux/slices/userSlice'
-import { confirmCodeScreenIdentifier, homeScreenIdentifier, signUpNavigatorIdentifier } from '../util/Constants';
+import { confirmCodeScreenIdentifier } from '../util/Constants';
+import AuthButton from '../buttons/AuthButton';
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -25,6 +26,7 @@ const LoginScreen = ({ navigation }) => {
     const phoneNoSpacesPlusCountryCode = countryCode + phoneNumber.replace(/\s/g, "")
     console.log(phoneNoSpacesPlusCountryCode)
     setShowIndicator(true);
+    await signOut()
     try {
       console.log("Trying to sign in user");
       const {nextStep} = await signIn({
@@ -54,11 +56,8 @@ const LoginScreen = ({ navigation }) => {
     }  catch (error) {
       console.log(error);
 
-      if (error.name == "UserAlreadyAuthenticatedException") {
-        const { userId } = await getCurrentUser();
-        dispatch(updateCognitoId(userId));
-        dispatch(updatePhoneNumber(phoneNoSpacesPlusCountryCode));
-        navigation.navigate(homeScreenIdentifier);
+      if (error.name == "UserUnAuthenticatedException") {
+        // Figure out how to resend verification code
       }
       
       try {
@@ -135,8 +134,10 @@ const LoginScreen = ({ navigation }) => {
         source={require('../../assets/splash.png')}
         style={styles.logo}
       />
-      <View
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.phoneNumberInputWrapper}
+        keyboardVerticalOffset={10}
       >
         <View
           style={styles.phoneInputContainerView}
@@ -155,9 +156,7 @@ const LoginScreen = ({ navigation }) => {
             }}
           />
         </View>
-        <View 
-          style={styles.space}
-        />
+        <View />
         {
           showIndicator ?
 
@@ -175,12 +174,7 @@ const LoginScreen = ({ navigation }) => {
               label={"Login/Signup"}
             />
         }
-
-
-      </View>
-      <View 
-        style={styles.space}
-      />
+      </KeyboardAvoidingView>
     </View>
   )
 }
@@ -202,8 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
   },
   logo: {
-    position: 'absolute',
-    bottom: 500,
+    marginTop: 100,
     width: 320,
     height: 80,
   },
@@ -215,18 +208,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   phoneNumberInputWrapper: {
-    position: 'absolute',
-    bottom: 320,
-  },
-  space: {
-    height: 5
+    marginBottom: 25,
   },
   view: {
-    display: 'flex',
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
   }
 });

@@ -1,19 +1,23 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
+
 import pickImage from '../../util/PickImage'
 import { UPDATE_PROFILE_PIC_LAMBDA_URL, CREATE_NEW_USER_LAMBDA_URL } from '../../util/Constants';
-
+import commonStyles from '../../util/CommonStyles';
+import { levelSignUpScreenIdentifier } from '../../util/Constants';
 
 const AddPictureSignUpScreen = () => {
   const navigation = useNavigation();
   const [imageURL, setImageURL] = useState(null);
+  const [showIndicator, setShowIndicator] = useState(false);
 
 
   const cognitoId = useSelector(state => state.user.cognitoId)
   const phoneNumber = useSelector(state => state.user.phoneNumber)
+  const email = useSelector(state => state.user.email)
   const firstName = useSelector(state => state.user.firstName)
   const lastName = useSelector(state => state.user.lastName)
   const birthday = useSelector(state => state.user.birthday)
@@ -23,6 +27,7 @@ const AddPictureSignUpScreen = () => {
  
 
   const onPressArrow = async() => {
+    setShowIndicator(true);
     try {
       await uploadImage();
       await createProfile();
@@ -32,7 +37,7 @@ const AddPictureSignUpScreen = () => {
       alert("Castastrophic failure. You will now die.")
       console.log(error)
     }
-
+    setShowIndicator(false);
   }
 
   const callPickImage = async() => {
@@ -95,6 +100,7 @@ const AddPictureSignUpScreen = () => {
     const body = JSON.stringify({
       cognitoId: cognitoId,
       phoneNumber: phoneNumber,
+      email: email,
       firstName: firstName,
       lastName: lastName,
       birthday: birthday,
@@ -124,23 +130,48 @@ const AddPictureSignUpScreen = () => {
       style={styles.root}
     >
       <IconButton
-        icon='arrow-right'
-        color={'grey'}
+        icon='arrow-left'
+        iconColor={'#9C11E6'}
         size={40}
-        style={styles.arrowIcon}
-        disabled={imageURL !== null ? false : true}
-        onPress={() => onPressArrow()}
+        style={commonStyles.leftArrowIcon}
+        onPress={() => navigation.navigate(levelSignUpScreenIdentifier)}
+        disabled={showIndicator ? true : false}
       />
+      {imageURL == null || showIndicator ? 
+        showIndicator ? 
+            <ActivityIndicator
+              style={styles.activityIndicator}
+              size='large'
+              color='#9C11E6'
+            />
+          :
+            <IconButton
+              icon='arrow-right'
+              iconColor={'grey'}
+              size={40}
+              style={commonStyles.rightArrowIcon}
+              disabled
+            />
+            :
+            <IconButton
+              icon='arrow-right'
+              iconColor={'#9C11E6'}
+              size={40}
+              style={commonStyles.rightArrowIcon}
+              onPress={() => onPressArrow()}
+            />
+      }      
       <Text
         style={styles.copy}
       >
-        Add a photo so people will recognize you when it's time to play!
+        Add a photo!
       </Text>
       <View
         style={styles.firstRowView}
       >
         <TouchableOpacity
           onPress={() => callPickImage()}
+          disabled={showIndicator ? true : false}
         >
           <Image
             style={styles.mainImg}
@@ -156,10 +187,10 @@ const AddPictureSignUpScreen = () => {
 
 
 const styles = StyleSheet.create({
-  arrowIcon: {
+  activityIndicator: {
     position: 'absolute',
-    top: 20,
-    right: 5,
+    top: 40,
+    right: 20,
   },
   copy: {
     fontSize: 24,

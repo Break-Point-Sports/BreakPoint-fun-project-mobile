@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { IconButton, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from 'react-native-paper';
-import { updateGender } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { updateGender } from '../../redux/slices/userSlice';
+import commonStyles from '../../util/CommonStyles';
+import { birthdaySignUpScreenIdentifier, citySignUpScreenIdentifier } from '../../util/Constants';
 
 const GenderSignUpScreen = () => {
   const navigation = useNavigation(); 
@@ -15,13 +17,29 @@ const GenderSignUpScreen = () => {
       style={styles.root}
     >
       <IconButton
-        icon='arrow-right'
-        color={'grey'}
+        icon='arrow-left'
+        iconColor={'#9C11E6'}
         size={40}
-        style={styles.arrowIcon}
-        onPress={() => navigation.navigate('signup-city')}
-        disabled={gender === '' ? true : false}
+        style={commonStyles.leftArrowIcon}
+        onPress={() => navigation.navigate(birthdaySignUpScreenIdentifier)}
       />
+      {gender === '' ? 
+        <IconButton
+          icon='arrow-right'
+          iconColor={'grey'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          disabled
+        />
+        :
+        <IconButton
+          icon='arrow-right'
+          iconColor={'#9C11E6'}
+          size={40}
+          style={commonStyles.rightArrowIcon}
+          onPress={() => navigation.navigate(citySignUpScreenIdentifier)}
+        />
+      }
       <Text
         style={styles.whatsUrName}
       >
@@ -31,6 +49,8 @@ const GenderSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ gender === 'male' ? 'white' : 'black' }
+          buttonColor={ gender === 'male' ? '#9C11E6' : 'white' }
           mode={ gender === 'male' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateGender('male'))}
@@ -43,6 +63,8 @@ const GenderSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ gender === 'female' ? 'white' : 'black' }
+          buttonColor={ gender === 'female' ? '#9C11E6' : 'white' }
           mode={ gender === 'female' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateGender('female'))}
@@ -54,6 +76,8 @@ const GenderSignUpScreen = () => {
         style={styles.radioButtonView}
       >
         <Button
+          textColor={ gender === 'non-binary' ? 'white' : 'black' }
+          buttonColor={ gender === 'non-binary' ? '#9C11E6' : 'white' }
           mode={ gender === 'non-binary' ? 'contained' : 'outlined' }
           style={styles.button}
           onPress={() => dispatch(updateGender('non-binary'))}
@@ -76,6 +100,7 @@ const styles = StyleSheet.create({
   button: {
     width: 250,
     marginBottom: 10,
+    borderColor: '#9C11E6',
   },
   radioButtonView: {
     display: 'flex',
